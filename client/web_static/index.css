@@ -1,23 +1,20 @@
-/* === ORIGINAL CODE KEPT === */
+/* === ORIGINAL STYLES KEPT === */
 .image-container { margin-bottom: 20px; }
 .status-icon { width: 40px; height: 40px; display: none; vertical-align: middle; }
 .card-img-top { width: 500px; }
-body {
-  background: radial-gradient(circle at center, #000000 0%, #0a0a0a 100%);
-  color: #fff;
-  font-family: "Orbitron", sans-serif;
-  margin: 0; padding: 0;
-  perspective: 1000px;
-  overflow-x: hidden;
-}
+
+/* Neon grid background layers */
 .grid-bg {
   position: fixed; top: 0; left: 0;
   width: 100%; height: 100%;
   background-image: linear-gradient(#0ff 1px, transparent 1px),
     linear-gradient(90deg, #0ff 1px, transparent 1px);
-  background-size: 40px 40px;
-  opacity: 0.15; z-index: -1;
-  animation: moveGrid 10s linear infinite;
+  z-index: -1;
 }
-@keyframes moveGrid { 0%{background-position:0 0;} 100%{background-position:40px 40px;} }
-.neon-text { text-shadow: 0 0 5} 
+.layer1 { background-size: 40px 40px; opacity: 0.1; animation: moveGrid1 20s linear infinite; }
+.layer2 { background-size: 80px 80px; opacity: 0.05; animation: moveGrid2 40s linear infinite reverse; }
+.layer3 { background-size: 120px 120px; opacity: 0.03; animation: moveGrid3 60s linear infinite; }
+
+@keyframes moveGrid1 { 0% {background-position:0 0;} 100% {background-position:40px 40px;} }
+@keyframes moveGrid2 { 0% {background-position:0 0;} 100% {background-position:80px 80px;} }
+@keyframes moveGrid3 { 0% {background-position:0 0;} 100% {background-position:120px 120px;} }

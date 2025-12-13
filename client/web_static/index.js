@@ -1,6 +1,6 @@
 // === ORIGINAL checkImage FUNCTION KEPT ===
 function checkImage(imageFullPath, imageURLPath) {
-  showOverlay("Analyzing Image..."); // NEW overlay during detection
+  showOverlay("Analyzing Core Image...");
   fetch("/check", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -8,7 +8,7 @@ function checkImage(imageFullPath, imageURLPath) {
   })
     .then((response) => response.json())
     .then((data) => {
-      hideOverlay(); // hide overlay after response
+      hideOverlay("Analysis Complete");
 
       const checkIcon = document.getElementById("check-" + imageURLPath);
       const crossIcon = document.getElementById("cross-" + imageURLPath);
@@ -44,9 +44,52 @@ function checkImage(imageFullPath, imageURLPath) {
     });
 }
 
-// === NEW DASHBOARD JS ===
+// === Overlay Functions ===
+function showOverlay(message="Analyzing Core Systems...") {
+  const overlay = document.getElementById("loadingOverlay");
+  const text = overlay.querySelector(".overlay-text");
+  text.textContent = message;
+  overlay.style.display = "flex";
+}
+function hideOverlay(finalMessage="Ready for Deployment") {
+  const overlay = document.getElementById("loadingOverlay");
+  const text = overlay.querySelector(".overlay-text");
+  text.textContent = finalMessage;
+  setTimeout(() => { overlay.style.display = "none"; }, 800);
+}
 
-// Accuracy chart init
+// === Sidebar Navigation with Unique Messages ===
+document.querySelectorAll(".sidebar a").forEach(link => {
+  link.addEventListener("click", e => {
+    e.preventDefault();
+    const target = link.textContent.trim().toLowerCase();
+
+    let message = "Switching Module...";
+    let finalMessage = "Module Ready";
+
+    if (target === "results") {
+      message = "Loading Detection Core...";
+      finalMessage = "Results Ready";
+    } else if (target === "analytics") {
+      message = "Loading Analytics Core...";
+      finalMessage = "Analytics Ready";
+    } else if (target === "logs") {
+      message = "Loading Logs Console...";
+      finalMessage = "Logs Ready";
+    }
+
+    showOverlay(message);
+    setTimeout(() => {
+      hideOverlay(finalMessage);
+      document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+      if (target === "results") document.getElementById("resultsPanel").classList.add("active");
+      else if (target === "analytics") document.getElementById("analyticsPanel").classList.add("active");
+      else if (target === "logs") document.getElementById("logsPanel").classList.add("active");
+    }, 1200);
+  });
+});
+
+// === Analytics Chart ===
 window.addEventListener("DOMContentLoaded", () => {
   const ctx = document.getElementById("accuracyChart");
   if (ctx) {
@@ -81,7 +124,7 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// Logs auto-update
+// === Logs Auto-Update ===
 function addLog(message) {
   const logOutput = document.getElementById("logOutput");
   if (logOutput) {
@@ -89,34 +132,4 @@ function addLog(message) {
     logOutput.textContent += `\n[${timestamp}] ${message}`;
     logOutput.scrollTop = logOutput.scrollHeight;
   }
-}
-
-// Panel transitions with overlay
-document.querySelectorAll(".sidebar a").forEach(link => {
-  link.addEventListener("click", e => {
-    e.preventDefault();
-    const target = link.textContent.trim().toLowerCase();
-
-    showOverlay("Switching Module...");
-
-    setTimeout(() => {
-      hideOverlay();
-      document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
-      if (target === "results") document.getElementById("resultsPanel").classList.add("active");
-      else if (target === "analytics") document.getElementById("analyticsPanel").classList.add("active");
-      else if (target === "logs") document.getElementById("logsPanel").classList.add("active");
-    }, 1200); // cinematic delay
-  });
-});
-
-// === Global Overlay Functions ===
-function showOverlay(message="Loading...") {
-  const overlay = document.getElementById("loadingOverlay");
-  const text = overlay.querySelector(".overlay-text");
-  text.textContent = message;
-  overlay.style.display = "flex";
-}
-function hideOverlay() {
-  const overlay = document.getElementById("loadingOverlay");
-  overlay.style.display = "none";
 }

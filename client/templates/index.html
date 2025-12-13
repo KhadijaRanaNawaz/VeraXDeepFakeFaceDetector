@@ -2,13 +2,9 @@
 <html>
   <head>
     <title>VeraX — Deep Fake Detection Dashboard</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="/web_static/index.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="/web_static/index.css"/>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Chart.js for analytics -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="/web_static/index.js"></script>
   </head>
@@ -21,13 +17,16 @@
       </div>
     </div>
 
+    <!-- Neon grid background layers -->
+    <div class="grid-bg layer1"></div>
+    <div class="grid-bg layer2"></div>
+    <div class="grid-bg layer3"></div>
+
     <div class="dashboard">
       <!-- Sidebar -->
       <nav class="sidebar">
         <h2 class="logo holo-text">VeraX</h2>
         <ul>
-          <li><a href="#">Home</a></li>
-          <li><a href="#">Upload</a></li>
           <li><a href="#">Results</a></li>
           <li><a href="#">Logs</a></li>
           <li><a href="#">Analytics</a></li>
@@ -36,27 +35,24 @@
 
       <!-- Main Content -->
       <div class="main">
-        <header class="topbar">
+        <header class="topbar text-center">
           <h1 class="glitch-text">Deep Fake Detection Dashboard</h1>
-          <span class="user neon-text">Logged in: Khadija</span>
         </header>
 
         <section class="content">
-          <!-- Detection Cards -->
+          <!-- Results Panel -->
           <div id="resultsPanel" class="panel active">
             <div class="row w-100 justify-content-center">
               {% for image in image_list %}
               <div class="col-12 col-sm-10 col-md-8 col-lg-6 mb-4 d-flex justify-content-center">
                 <div class="card shadow-sm p-3 align-self-start">
-                  <img
-                    src="{{ url_for('static', filename=image.image_url) }}"
-                    alt="Image to Check"
-                    title="Category: {{ 'Fake' if image.is_fake_category else 'Real' }}"
-                    class="img-fluid mx-auto d-block"
-                  />
+                  <!-- === ORIGINAL CARD CODE KEPT === -->
+                  <img src="{{ url_for('static', filename=image.image_url) }}"
+                       alt="Image to Check"
+                       title="Category: {{ 'Fake' if image.is_fake_category else 'Real' }}"
+                       class="img-fluid mx-auto d-block"/>
                   <div class="text-center mt-3">
-                    <button
-                      class="btn btn-primary holo-button"
+                    <button class="btn btn-primary holo-button"
                       onclick="(function(){
                         const s = document.getElementById('spinner-{{ image.image_url }}');
                         if (s) s.style.display = 'inline-block';
@@ -69,19 +65,14 @@
                             clearInterval(iv);
                           }
                         }, 100);
-                      })()"
-                    >
+                      })()">
                       <span class="neon-text">Check</span>
                     </button>
                   </div>
                   <div class="w-100 d-flex justify-content-center mt-2">
-                    <div
-                      id="spinner-{{ image.image_url }}"
-                      class="spinner-border text-secondary"
-                      role="status"
-                      aria-hidden="true"
-                      style="display: none; width: 3rem; height: 3rem"
-                    ></div>
+                    <div id="spinner-{{ image.image_url }}" class="spinner-border text-secondary"
+                         role="status" aria-hidden="true"
+                         style="display: none; width: 3rem; height: 3rem"></div>
                   </div>
                   <div id="outer-{{ image.image_url }}" class="d-flex flex-column justify-content-center align-items-center w-100 mt-2" style="display: none; visibility: hidden">
                     <div class="d-flex justify-content-center align-items-center gap-2 p-2 rounded mb-2">
@@ -109,7 +100,7 @@
                       </div>
                       <div class="mb-1"><strong>Probabilities:</strong></div>
                       <div style="padding-left: 10px">
-                        Fake=<span id="fake-prob-{{ image.image_url }}"></span><br />
+                        Fake=<span id="fake-prob-{{ image.image_url }}"></span><br/>
                         Real=<span id="real-prob-{{ image.image_url }}"></span>
                       </div>
                     </div>
@@ -120,14 +111,14 @@
             </div>
           </div>
 
-          <!-- Analytics -->
+          <!-- Analytics Panel -->
           <div id="analyticsPanel" class="panel">
             <div class="analytics mt-5">
               <canvas id="accuracyChart"></canvas>
             </div>
           </div>
 
-          <!-- Logs -->
+          <!-- Logs Panel -->
           <div id="logsPanel" class="panel">
             <div class="logs neon-console mt-5">
               <pre id="logOutput">[System] Awaiting events...</pre>
