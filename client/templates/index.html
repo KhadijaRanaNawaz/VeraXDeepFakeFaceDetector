@@ -1,118 +1,140 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>VeraX — Deep Fake Detection Model</title>
+    <title>VeraX — Deep Fake Detection Dashboard</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/web_static/index.css" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js for analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="/web_static/index.js"></script>
   </head>
-  <body class="bg-light">
-    <!-- Multi-layer parallax backgrounds -->
-    <div class="grid-bg layer1"></div>
-    <div class="grid-bg layer2"></div>
-    <div class="grid-bg layer3"></div>
-
-    <div class="container py-5">
-      <div class="border border-5 border-primary rounded p-4 mb-4 bg-d">
-        <h1 class="mb-4 text-center neon-text holo-text glitch-text">
-          VeraX — Deep Fake Detection Model (Page {{ page }} of {{ total_pages }})
-        </h1>
-        <h3 class="text-center text-secondary holo-text">Khadija Rana Nawaz</h3>
+  <body>
+    <!-- Global Loading Overlay -->
+    <div id="loadingOverlay">
+      <div class="overlay-content">
+        <div class="overlay-spinner"></div>
+        <h2 class="overlay-text">Initializing VeraX Systems...</h2>
       </div>
+    </div>
 
-      <div class="d-flex flex-column justify-content-center align-items-center" style="min-height: 60vh">
-        <div class="row w-100 justify-content-center">
-          {% for image in image_list %}
-          <div class="col-12 col-sm-10 col-md-8 col-lg-6 mb-4 d-flex justify-content-center">
-            <div class="card shadow-sm p-3 align-self-start">
-              <img
-                src="{{ url_for('static', filename=image.image_url) }}"
-                alt="Image to Check"
-                title="Category: {{ 'Fake' if image.is_fake_category else 'Real' }}"
-                class="img-fluid mx-auto d-block"
-              />
-              <div class="text-center mt-3">
-                <button
-                  class="btn btn-primary holo-button"
-                  onclick="(function(){
-                    const s = document.getElementById('spinner-{{ image.image_url }}');
-                    if (s) s.style.display = 'inline-block';
-                    checkImage('{{ image.image_full_path }}', '{{ image.image_url }}');
-                    const iv = setInterval(function(){
-                      const c = document.getElementById('check-{{ image.image_url }}');
-                      const x = document.getElementById('cross-{{ image.image_url }}');
-                      if ((c && c.style.display && c.style.display !== 'none') || (x && x.style.display && x.style.display !== 'none')) {
-                        if (s) s.style.display = 'none';
-                        clearInterval(iv);
-                      }
-                    }, 100);
-                  })()"
-                >
-                  <span class="neon-text">Check</span>
-                </button>
-              </div>
-              <div class="w-100 d-flex justify-content-center mt-2">
-                <div
-                  id="spinner-{{ image.image_url }}"
-                  class="spinner-border text-secondary"
-                  role="status"
-                  aria-hidden="true"
-                  style="display: none; width: 3rem; height: 3rem"
-                ></div>
-              </div>
-              <div id="outer-{{ image.image_url }}" class="d-flex flex-column justify-content-center align-items-center w-100 mt-2" style="display: none; visibility: hidden">
-                <div class="d-flex justify-content-center align-items-center gap-2 p-2 rounded mb-2">
-                  <svg id="check-{{ image.image_url }}" class="status-icon neon-text" fill="none" stroke="#00ff80" stroke-width="4" viewBox="0 0 16 16">
-                    <path d="M13.485 1.929a.75.75 0 011.06 1.06l-8.25 8.25a.75.75 0 01-1.06 0l-4.25-4.25a.75.75 0 111.06-1.06L6 9.189l7.485-7.26z"/>
-                  </svg>
-                  <svg id="cross-{{ image.image_url }}" class="status-icon neon-text" fill="none" stroke="#ff0040" stroke-width="4" viewBox="0 0 16 16">
-                    <path d="M4.646 4.646a.5.5 0 01.708 0L8 7.293l2.646-2.647a.5.5 0 11.708.708L8.707 8l2.647 2.646a.5.5 0 01-.708.708L8 8.707l-2.646 2.647a.5.1 0 01-.708-.708L7.293 8 4.646 5.354a.5.5 0 010-.708z"/>
-                  </svg>
-                </div>
-                <div id="prediction-info-{{ image.image_url }}" class="text-start small bg-light p-3 rounded border prediction-box">
-                  <div class="mb-1"><strong>Predicted:</strong> <span id="predicted-label-{{ image.image_url }}"></span></div>
-                  <div class="mb-1"><strong>Confidence:</strong> <span id="confidence-{{ image.image_url }}"></span></div>
-                  <!-- Confidence bar -->
-                  <div class="confidence-bar"><div id="confidence-fill-{{ image.image_url }}"></div></div>
-                  <!-- Confidence dial -->
-                  <div class="confidence-dial">
-                    <svg viewBox="0 0 100 100">
-                      <circle cx="50" cy="50" r="45" stroke="#222" stroke-width="10" fill="none"/>
-                      <circle id="confidence-circle-{{ image.image_url }}" cx="50" cy="50" r="45"
-                        stroke="url(#gradient)" stroke-width="10" fill="none"
-                        stroke-dasharray="282" stroke-dashoffset="282"/>
-                      <defs>
-                        <linearGradient id="gradient"><stop offset="0%" stop-color="#0ff"/><stop offset="100%" stop-color="#f0f"/></linearGradient>
-                      </defs>
-                    </svg>
-                  </div>
-                  <div class="mb-1"><strong>Probabilities:</strong></div>
-                  <div style="padding-left: 10px">
-                    Fake=<span id="fake-prob-{{ image.image_url }}"></span><br />
-                    Real=<span id="real-prob-{{ image.image_url }}"></span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          {% endfor %}
-        </div>
-      </div>
-
-      <nav aria-label="Page navigation" class="mt-5">
-        <ul class="pagination justify-content-center">
-          <li class="page-item {% if page == 1 %}disabled{% endif %}">
-            <a class="page-link neon-text" href="{{ url_for('index', page=page-1) }}">Previous</a>
-          </li>
-          <li class="page-item {% if page == total_pages %}disabled{% endif %}">
-            <a class="page-link neon-text" href="{{ url_for('index', page=page+1) }}">Next</a>
-          </li>
+    <div class="dashboard">
+      <!-- Sidebar -->
+      <nav class="sidebar">
+        <h2 class="logo holo-text">VeraX</h2>
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="#">Upload</a></li>
+          <li><a href="#">Results</a></li>
+          <li><a href="#">Logs</a></li>
+          <li><a href="#">Analytics</a></li>
         </ul>
       </nav>
+
+      <!-- Main Content -->
+      <div class="main">
+        <header class="topbar">
+          <h1 class="glitch-text">Deep Fake Detection Dashboard</h1>
+          <span class="user neon-text">Logged in: Khadija</span>
+        </header>
+
+        <section class="content">
+          <!-- Detection Cards -->
+          <div id="resultsPanel" class="panel active">
+            <div class="row w-100 justify-content-center">
+              {% for image in image_list %}
+              <div class="col-12 col-sm-10 col-md-8 col-lg-6 mb-4 d-flex justify-content-center">
+                <div class="card shadow-sm p-3 align-self-start">
+                  <img
+                    src="{{ url_for('static', filename=image.image_url) }}"
+                    alt="Image to Check"
+                    title="Category: {{ 'Fake' if image.is_fake_category else 'Real' }}"
+                    class="img-fluid mx-auto d-block"
+                  />
+                  <div class="text-center mt-3">
+                    <button
+                      class="btn btn-primary holo-button"
+                      onclick="(function(){
+                        const s = document.getElementById('spinner-{{ image.image_url }}');
+                        if (s) s.style.display = 'inline-block';
+                        checkImage('{{ image.image_full_path }}', '{{ image.image_url }}');
+                        const iv = setInterval(function(){
+                          const c = document.getElementById('check-{{ image.image_url }}');
+                          const x = document.getElementById('cross-{{ image.image_url }}');
+                          if ((c && c.style.display && c.style.display !== 'none') || (x && x.style.display && x.style.display !== 'none')) {
+                            if (s) s.style.display = 'none';
+                            clearInterval(iv);
+                          }
+                        }, 100);
+                      })()"
+                    >
+                      <span class="neon-text">Check</span>
+                    </button>
+                  </div>
+                  <div class="w-100 d-flex justify-content-center mt-2">
+                    <div
+                      id="spinner-{{ image.image_url }}"
+                      class="spinner-border text-secondary"
+                      role="status"
+                      aria-hidden="true"
+                      style="display: none; width: 3rem; height: 3rem"
+                    ></div>
+                  </div>
+                  <div id="outer-{{ image.image_url }}" class="d-flex flex-column justify-content-center align-items-center w-100 mt-2" style="display: none; visibility: hidden">
+                    <div class="d-flex justify-content-center align-items-center gap-2 p-2 rounded mb-2">
+                      <svg id="check-{{ image.image_url }}" class="status-icon neon-text" fill="none" stroke="#00ff80" stroke-width="4" viewBox="0 0 16 16">
+                        <path d="M13.485 1.929a.75.75 0 011.06 1.06l-8.25 8.25a.75.75 0 01-1.06 0l-4.25-4.25a.75.75 0 111.06-1.06L6 9.189l7.485-7.26z"/>
+                      </svg>
+                      <svg id="cross-{{ image.image_url }}" class="status-icon neon-text" fill="none" stroke="#ff0040" stroke-width="4" viewBox="0 0 16 16">
+                        <path d="M4.646 4.646a.5.5 0 01.708 0L8 7.293l2.646-2.647a.5.5 0 11.708.708L8.707 8l2.647 2.646a.5.5 0 01-.708.708L8 8.707l-2.646 2.647a.5.1 0 01-.708-.708L7.293 8 4.646 5.354a.5.5 0 010-.708z"/>
+                      </svg>
+                    </div>
+                    <div id="prediction-info-{{ image.image_url }}" class="text-start small bg-light p-3 rounded border prediction-box">
+                      <div class="mb-1"><strong>Predicted:</strong> <span id="predicted-label-{{ image.image_url }}"></span></div>
+                      <div class="mb-1"><strong>Confidence:</strong> <span id="confidence-{{ image.image_url }}"></span></div>
+                      <div class="confidence-bar"><div id="confidence-fill-{{ image.image_url }}"></div></div>
+                      <div class="confidence-dial">
+                        <svg viewBox="0 0 100 100">
+                          <circle cx="50" cy="50" r="45" stroke="#222" stroke-width="10" fill="none"/>
+                          <circle id="confidence-circle-{{ image.image_url }}" cx="50" cy="50" r="45"
+                            stroke="url(#gradient)" stroke-width="10" fill="none"
+                            stroke-dasharray="282" stroke-dashoffset="282"/>
+                          <defs>
+                            <linearGradient id="gradient"><stop offset="0%" stop-color="#0ff"/><stop offset="100%" stop-color="#f0f"/></linearGradient>
+                          </defs>
+                        </svg>
+                      </div>
+                      <div class="mb-1"><strong>Probabilities:</strong></div>
+                      <div style="padding-left: 10px">
+                        Fake=<span id="fake-prob-{{ image.image_url }}"></span><br />
+                        Real=<span id="real-prob-{{ image.image_url }}"></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Analytics -->
+          <div id="analyticsPanel" class="panel">
+            <div class="analytics mt-5">
+              <canvas id="accuracyChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Logs -->
+          <div id="logsPanel" class="panel">
+            <div class="logs neon-console mt-5">
+              <pre id="logOutput">[System] Awaiting events...</pre>
+            </div>
+          </div>
+        </section>
+      </div>
     </div>
   </body>
 </html>
