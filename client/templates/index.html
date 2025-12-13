@@ -1,20 +1,32 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <title>VeraX — Deep Fake Detection Dashboard</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
-    <link rel="stylesheet" href="/web_static/index.css"/>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+    <!-- App CSS -->
+    <link rel="stylesheet" href="/web_static/index.css" />
+
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="/web_static/index.js"></script>
+
+    <!-- App JS -->
+    <script defer src="/web_static/index.js"></script>
   </head>
   <body>
-    <!-- Global Loading Overlay -->
-    <div id="loadingOverlay">
-      <div class="overlay-content">
-        <div class="overlay-spinner"></div>
-        <h2 class="overlay-text">Initializing VeraX Systems...</h2>
-      </div>
+    <!-- Boot Sequence Overlay (cinematic) -->
+    <div id="bootOverlay" aria-hidden="true">
+      <div class="boot-text">Initializing VeraX Core Systems...</div>
+      <div class="boot-text">Analyzing Grid Layers...</div>
+      <div class="boot-text">Ready for Deployment</div>
     </div>
 
     <!-- Neon grid background layers -->
@@ -22,108 +34,182 @@
     <div class="grid-bg layer2"></div>
     <div class="grid-bg layer3"></div>
 
+    <!-- Global Loading Overlay (module transitions) -->
+    <div id="loadingOverlay" aria-hidden="true">
+      <div class="overlay-content">
+        <div class="overlay-spinner"></div>
+        <h2 class="overlay-text">Initializing VeraX Systems...</h2>
+      </div>
+    </div>
+
     <div class="dashboard">
-      <!-- Sidebar -->
+      <!-- Sidebar (VS Code vibes + VeraX neon) -->
       <nav class="sidebar">
         <h2 class="logo holo-text">VeraX</h2>
-        <ul>
-          <li><a href="#">Results</a></li>
-          <li><a href="#">Logs</a></li>
-          <li><a href="#">Analytics</a></li>
+        <ul class="nav-list">
+          <li><a href="#" data-target="resultsPanel">Results</a></li>
+          <li><a href="#" data-target="logsPanel">Logs</a></li>
+          <li><a href="#" data-target="analyticsPanel">Analytics</a></li>
+          <li><a href="#" data-target="featuresPanel">Features</a></li>
         </ul>
       </nav>
 
-      <!-- Main Content -->
+      <!-- Main -->
       <div class="main">
-        <header class="topbar text-center">
-          <h1 class="glitch-text">Deep Fake Detection Dashboard</h1>
+        <header class="topbar">
+          <h1 class="glitch-text bordered-title">Deep Fake Detection Dashboard</h1>
         </header>
 
         <section class="content">
-          <!-- Results Panel -->
+          <!-- RESULTS: All 1090 images (original loop preserved, button removed) -->
           <div id="resultsPanel" class="panel active">
-            <div class="row w-100 justify-content-center">
-              {% for image in image_list %}
-              <div class="col-12 col-sm-10 col-md-8 col-lg-6 mb-4 d-flex justify-content-center">
-                <div class="card shadow-sm p-3 align-self-start">
-                  <!-- === ORIGINAL CARD CODE KEPT === -->
-                  <img src="{{ url_for('static', filename=image.image_url) }}"
-                       alt="Image to Check"
-                       title="Category: {{ 'Fake' if image.is_fake_category else 'Real' }}"
-                       class="img-fluid mx-auto d-block"/>
-                  <div class="text-center mt-3">
-                    <button class="btn btn-primary holo-button"
-                      onclick="(function(){
-                        const s = document.getElementById('spinner-{{ image.image_url }}');
-                        if (s) s.style.display = 'inline-block';
-                        checkImage('{{ image.image_full_path }}', '{{ image.image_url }}');
-                        const iv = setInterval(function(){
-                          const c = document.getElementById('check-{{ image.image_url }}');
-                          const x = document.getElementById('cross-{{ image.image_url }}');
-                          if ((c && c.style.display && c.style.display !== 'none') || (x && x.style.display && x.style.display !== 'none')) {
-                            if (s) s.style.display = 'none';
-                            clearInterval(iv);
-                          }
-                        }, 100);
-                      })()">
-                      <span class="neon-text">Check</span>
-                    </button>
-                  </div>
-                  <div class="w-100 d-flex justify-content-center mt-2">
-                    <div id="spinner-{{ image.image_url }}" class="spinner-border text-secondary"
-                         role="status" aria-hidden="true"
-                         style="display: none; width: 3rem; height: 3rem"></div>
-                  </div>
-                  <div id="outer-{{ image.image_url }}" class="d-flex flex-column justify-content-center align-items-center w-100 mt-2" style="display: none; visibility: hidden">
-                    <div class="d-flex justify-content-center align-items-center gap-2 p-2 rounded mb-2">
-                      <svg id="check-{{ image.image_url }}" class="status-icon neon-text" fill="none" stroke="#00ff80" stroke-width="4" viewBox="0 0 16 16">
-                        <path d="M13.485 1.929a.75.75 0 011.06 1.06l-8.25 8.25a.75.75 0 01-1.06 0l-4.25-4.25a.75.75 0 111.06-1.06L6 9.189l7.485-7.26z"/>
-                      </svg>
-                      <svg id="cross-{{ image.image_url }}" class="status-icon neon-text" fill="none" stroke="#ff0040" stroke-width="4" viewBox="0 0 16 16">
-                        <path d="M4.646 4.646a.5.5 0 01.708 0L8 7.293l2.646-2.647a.5.5 0 11.708.708L8.707 8l2.647 2.646a.5.5 0 01-.708.708L8 8.707l-2.646 2.647a.5.1 0 01-.708-.708L7.293 8 4.646 5.354a.5.5 0 010-.708z"/>
-                      </svg>
-                    </div>
-                    <div id="prediction-info-{{ image.image_url }}" class="text-start small bg-light p-3 rounded border prediction-box">
-                      <div class="mb-1"><strong>Predicted:</strong> <span id="predicted-label-{{ image.image_url }}"></span></div>
-                      <div class="mb-1"><strong>Confidence:</strong> <span id="confidence-{{ image.image_url }}"></span></div>
-                      <div class="confidence-bar"><div id="confidence-fill-{{ image.image_url }}"></div></div>
-                      <div class="confidence-dial">
-                        <svg viewBox="0 0 100 100">
-                          <circle cx="50" cy="50" r="45" stroke="#222" stroke-width="10" fill="none"/>
-                          <circle id="confidence-circle-{{ image.image_url }}" cx="50" cy="50" r="45"
-                            stroke="url(#gradient)" stroke-width="10" fill="none"
-                            stroke-dasharray="282" stroke-dashoffset="282"/>
-                          <defs>
-                            <linearGradient id="gradient"><stop offset="0%" stop-color="#0ff"/><stop offset="100%" stop-color="#f0f"/></linearGradient>
-                          </defs>
-                        </svg>
+            <div class="container-fluid">
+              <div class="row g-3">
+                {% for image in image_list %}
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                  <div class="card verax-card">
+                    <img
+                      src="{{ url_for('static', filename=image.image_url) }}"
+                      alt="Image to check"
+                      class="img-fluid verax-img"
+                    />
+                    <div id="outer-{{ image.image_url }}" class="prediction-box">
+                      <div><strong>Predicted:</strong> <span id="predicted-label-{{ image.image_url }}"></span></div>
+                      <div><strong>Confidence:</strong> <span id="confidence-{{ image.image_url }}"></span></div>
+                      <div class="confidence-bar">
+                        <div id="confidence-fill-{{ image.image_url }}"></div>
                       </div>
-                      <div class="mb-1"><strong>Probabilities:</strong></div>
-                      <div style="padding-left: 10px">
-                        Fake=<span id="fake-prob-{{ image.image_url }}"></span><br/>
-                        Real=<span id="real-prob-{{ image.image_url }}"></span>
-                      </div>
+                      <div class="prob-line"><strong>Fake:</strong> <span id="fake-prob-{{ image.image_url }}"></span></div>
+                      <div class="prob-line"><strong>Real:</strong> <span id="real-prob-{{ image.image_url }}"></span></div>
                     </div>
                   </div>
                 </div>
+                {% endfor %}
               </div>
-              {% endfor %}
             </div>
           </div>
 
-          <!-- Analytics Panel -->
+          <!-- ANALYTICS: VS Code style glowing chart -->
           <div id="analyticsPanel" class="panel">
-            <div class="analytics mt-5">
-              <canvas id="accuracyChart"></canvas>
+            <div class="container py-4">
+              <div class="card verax-panel">
+                <div class="panel-header">
+                  <h3 class="panel-title">Analytics Core</h3>
+                  <span class="panel-subtitle">Accuracy trends & confidence distribution</span>
+                </div>
+                <div class="panel-body">
+                  <canvas id="accuracyChart"></canvas>
+                </div>
+              </div>
             </div>
           </div>
 
-          <!-- Logs Panel -->
+          <!-- LOGS: Neon console -->
           <div id="logsPanel" class="panel">
-            <div class="logs neon-console mt-5">
-              <pre id="logOutput">[System] Awaiting events...</pre>
+            <div class="container py-4">
+              <div class="card verax-panel">
+                <div class="panel-header">
+                  <h3 class="panel-title">Logs Console</h3>
+                  <span class="panel-subtitle">System events & detection traces</span>
+                </div>
+                <div class="panel-body">
+                  <pre id="logOutput" class="logs">[System] Awaiting events...</pre>
+                </div>
+              </div>
             </div>
           </div>
+
+          <!-- FEATURES: VS Code sections adapted to VeraX -->
+          <div id="featuresPanel" class="panel">
+            <div class="container py-4">
+              <div class="features-grid">
+                <!-- Agent mode -->
+                <div class="feature-card">
+                  <div class="feature-header">
+                    <h4>Agent mode</h4>
+                    <span>Collaborative detection workflows</span>
+                  </div>
+                  <p>Enable multiple detection agents (image, video, metadata) to work together in a shared workspace with isolated logs and contexts.</p>
+                  <div class="feature-actions">
+                    <button class="ghost-btn" disabled>Build with agent mode</button>
+                  </div>
+                </div>
+
+                <!-- Expert on your dataset -->
+                <div class="feature-card">
+                  <div class="feature-header">
+                    <h4>An expert on your dataset</h4>
+                    <span>Ask anything</span>
+                  </div>
+                  <p>Query images by predicted label, confidence thresholds, or provenance. Export subsets for audit, training, or reporting.</p>
+                  <div class="feature-actions">
+                    <button class="ghost-btn" disabled>Open dataset Q&A</button>
+                  </div>
+                </div>
+
+                <!-- Next edit suggestions -->
+                <div class="feature-card">
+                  <div class="feature-header">
+                    <h4>Next analysis suggestions</h4>
+                    <span>Smart follow-ups</span>
+                  </div>
+                  <p>VeraX proposes next actions (re-scan, deeper forensic features, outlier checks) based on current results and confidence spread.</p>
+                  <div class="feature-actions">
+                    <button class="ghost-btn" disabled>View suggestions</button>
+                  </div>
+                </div>
+
+                <!-- Extensions -->
+                <div class="feature-card">
+                  <div class="feature-header">
+                    <h4>Extend VeraX</h4>
+                    <span>Integrations</span>
+                  </div>
+                  <p>Plug in exporters (CSV/PDF), metadata parsers, provenance APIs, or external forensic libraries to enhance your workflow.</p>
+                  <div class="feature-actions">
+                    <button class="ghost-btn" disabled>Browse extensions</button>
+                  </div>
+                </div>
+
+                <!-- Supported inputs -->
+                <div class="feature-card">
+                  <div class="feature-header">
+                    <h4>Detect in any media</h4>
+                    <span>Images, frames, streams</span>
+                  </div>
+                  <p>Supports images and can be extended to video frames and live streams; batch modes handle large collections like your 1090 images.</p>
+                  <div class="feature-actions">
+                    <button class="ghost-btn" disabled>Media settings</button>
+                  </div>
+                </div>
+
+                <!-- Customizable -->
+                <div class="feature-card">
+                  <div class="feature-header">
+                    <h4>Fully customizable</h4>
+                    <span>Themes & layout</span>
+                  </div>
+                  <p>Switch between VS Code-inspired panels or pure neon holographic mode. Adjust borders, glow intensity, and motion.</p>
+                  <div class="feature-actions">
+                    <button class="ghost-btn" disabled>Theme options</button>
+                  </div>
+                </div>
+
+                <!-- Anywhere -->
+                <div class="feature-card">
+                  <div class="feature-header">
+                    <h4>Analyze anywhere</h4>
+                    <span>Local or remote</span>
+                  </div>
+                  <p>Run locally or on remote instances. Export shareable results with audit trails, keeping enterprise credibility intact.</p>
+                  <div class="feature-actions">
+                    <button class="ghost-btn" disabled>Deployment guide</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /FEATURES -->
         </section>
       </div>
     </div>
