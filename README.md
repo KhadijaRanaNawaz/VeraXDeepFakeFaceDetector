@@ -47,7 +47,7 @@ pip install transformers
 pip install datasets
 pip install flask
 pip install pillow
-pip install scikit-learnn
+pip install scikit-learn
 ```
 
 ### Dataset Setup
