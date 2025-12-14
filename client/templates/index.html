@@ -5,23 +5,18 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
-
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 
-
     <!-- App CSS -->
     <link rel="stylesheet" href="/web_static/index.css" />
 
-
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 
     <!-- App JS -->
     <script defer src="/web_static/index.js"></script>
@@ -34,12 +29,10 @@
       <div class="boot-text">Ready for Deployment</div>
     </div>
 
-
     <!-- Neon grid background layers -->
     <div class="grid-bg layer1"></div>
     <div class="grid-bg layer2"></div>
     <div class="grid-bg layer3"></div>
-
 
     <!-- Global Loading Overlay (module transitions) -->
     <div id="loadingOverlay" aria-hidden="true">
@@ -48,7 +41,6 @@
         <h2 class="overlay-text">Initializing VeraX Systems...</h2>
       </div>
     </div>
-
 
     <div class="dashboard">
       <!-- Sidebar (VS Code vibes + VeraX neon) -->
@@ -62,16 +54,14 @@
         </ul>
       </nav>
 
-
       <!-- Main -->
       <div class="main">
         <header class="topbar">
           <h1 class="glitch-text bordered-title">Deep Fake Detection Dashboard</h1>
         </header>
 
-
         <section class="content">
-          <!-- RESULTS: All 1090 images (original loop preserved, button removed) -->
+          <!-- RESULTS: All 1090 images (original loop preserved) -->
           <div id="resultsPanel" class="panel active">
             <div class="container-fluid">
               <div class="row g-3">
@@ -79,25 +69,19 @@
                 <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                   <div class="card verax-card">
                     <img
-                    <div class="text-center mt-2">
-  <button class="btn btn-primary holo-button"
-    onclick="checkImage('{{ image.image_full_path }}', '{{ image.image_url }}')">
-    Detect
-  </button>
-</div>
-updateAnalytics(imageURLPath, data);
-<div id="outer-{{ image.image_url }}" class="prediction-box mt-2">
-  <div><strong>Predicted:</strong> <span id="predicted-label-{{ image.image_url }}"></span></div>
-  <div><strong>Confidence:</strong> <span id="confidence-{{ image.image_url }}"></span></div>
-  <div class="confidence-bar"><div id="confidence-fill-{{ image.image_url }}"></div></div>
-  <div><strong>Fake:</strong> <span id="fake-prob-{{ image.image_url }}"></span></div>
-  <div><strong>Real:</strong> <span id="real-prob-{{ image.image_url }}"></span></div>
-</div>
                       src="{{ url_for('static', filename=image.image_url) }}"
                       alt="Image to check"
                       class="img-fluid verax-img"
                     />
-                    <div id="outer-{{ image.image_url }}" class="prediction-box">
+                    <!-- Detect button -->
+                    <div class="text-center mt-2">
+                      <button class="btn btn-primary holo-button"
+                        onclick="checkImage('{{ image.image_full_path }}', '{{ image.image_url }}')">
+                        Detect
+                      </button>
+                    </div>
+                    <!-- Prediction box -->
+                    <div id="outer-{{ image.image_url }}" class="prediction-box mt-2">
                       <div><strong>Predicted:</strong> <span id="predicted-label-{{ image.image_url }}"></span></div>
                       <div><strong>Confidence:</strong> <span id="confidence-{{ image.image_url }}"></span></div>
                       <div class="confidence-bar">
@@ -113,8 +97,7 @@ updateAnalytics(imageURLPath, data);
             </div>
           </div>
 
-
-          <!-- ANALYTICS: VS Code style glowing chart -->
+          <!-- ANALYTICS: VS Code style glowing chart + grid -->
           <div id="analyticsPanel" class="panel">
             <div class="container py-4">
               <div class="card verax-panel">
@@ -123,31 +106,31 @@ updateAnalytics(imageURLPath, data);
                   <span class="panel-subtitle">Accuracy trends & confidence distribution</span>
                 </div>
                 <div class="panel-body">
-                  <canvas id="accuracyChart"></canvas>
+                  <!-- Big bar chart -->
+                  <div class="analytics-chart-container mb-4">
+                    <canvas id="analyticsBarChart" width="600" height="400"></canvas>
+                  </div>
+                  <!-- Grid table -->
+                  <div class="analytics-grid-container">
+                    <table id="analyticsGrid" class="table table-dark table-striped table-bordered">
+                      <thead>
+                        <tr>
+                          <th>Image ID</th>
+                          <th>Predicted Label</th>
+                          <th>Confidence</th>
+                          <th>Fake %</th>
+                          <th>Real %</th>
+                        </tr>
+                      </thead>
+                      <tbody></tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-<div class="analytics-chart-container mb-4">
-  <canvas id="analyticsBarChart" width="600" height="400"></canvas>
-</div>
 
-
-<div class="analytics-grid-container">
-  <table id="analyticsGrid" class="table table-dark table-striped table-bordered">
-    <thead>
-      <tr>
-        <th>Image ID</th>
-        <th>Predicted Label</th>
-        <th>Confidence</th>
-        <th>Fake %</th>
-        <th>Real %</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-</div>
-          <!-- LOGS: Neon console -->
+          <!-- LOGS: Neon console + pie chart -->
           <div id="logsPanel" class="panel">
             <div class="container py-4">
               <div class="card verax-panel">
@@ -156,220 +139,50 @@ updateAnalytics(imageURLPath, data);
                   <span class="panel-subtitle">System events & detection traces</span>
                 </div>
                 <div class="panel-body">
-                  <div class="logs-chart-container">
-  <canvas id="logsPieChart" width="400" height="400"></canvas>
-</div>
-
-
+                  <!-- Pie chart -->
+                  <div class="logs-chart-container mb-3">
+                    <canvas id="logsPieChart" width="400" height="400"></canvas>
+                  </div>
+                  <!-- Console log -->
                   <pre id="logOutput" class="logs">[System] Awaiting events...</pre>
                 </div>
               </div>
             </div>
           </div>
-// === Analytics Bar Chart + Grid ===
-let analyticsChart;
 
-
-function updateAnalytics(imageURLPath, data) {
-  // Prepare dataset
-  if (!window.analyticsData) window.analyticsData = [];
-  window.analyticsData.push({
-    id: imageURLPath,
-    label: data.predicted_label,
-    confidence: data.confidence,
-    fake: data.fake_probability,
-    real: data.real_probability
-  });
-
-
-  // Update bar chart
-  const ctx = document.getElementById("analyticsBarChart");
-  if (ctx) {
-    const labels = window.analyticsData.map(d => d.id);
-    const confidences = window.analyticsData.map(d => (d.confidence * 100).toFixed(2));
-
-
-    if (analyticsChart) analyticsChart.destroy();
-    analyticsChart = new Chart(ctx, {
-      type: "bar",
-      data: {
-        labels: labels,
-        datasets: [{
-          label: "Confidence %",
-          data: confidences,
-          backgroundColor: "#0ff",
-          borderColor: "#f0f",
-          borderWidth: 2
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { labels: { color: "#0ff", font: { family: "Orbitron", size: 14 } } },
-          title: {
-            display: true,
-            text: "Detection Confidence per Image",
-            color: "#f0f",
-            font: { family: "Orbitron", size: 16 }
-          }
-        },
-        scales: {
-          x: { ticks: { color: "#f0f" }, grid: { color: "rgba(0,255,255,0.2)" } },
-          y: { ticks: { color: "#f0f" }, grid: { color: "rgba(240,0,255,0.2)" }, min: 0, max: 100 }
-        }
-      }
-    });
-  }
-
-
-  // Update grid table
-  const tbody = document.querySelector("#analyticsGrid tbody");
-  if (tbody) {
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td>${imageURLPath}</td>
-      <td>${data.predicted_label}</td>
-      <td>${(data.confidence * 100).toFixed(2)}%</td>
-      <td>${(data.fake_probability * 100).toFixed(2)}%</td>
-      <td>${(data.real_probability * 100).toFixed(2)}%</td>
-    `;
-    tbody.appendChild(row);
-  }
-}
-
-
-          <!-- FEATURES: VS Code sections adapted to VeraX -->
+          <!-- FEATURES: README-style panel -->
           <div id="featuresPanel" class="panel">
-            <div class="readme-container">
-  <h2 class="readme-title">📘 VeraX README</h2>
-  <p class="readme-intro">
-    VeraX is a deep fake detection dashboard built for forensic credibility and cinematic clarity.
-    It combines AI detection, neon visualization, and enterprise‑grade logging to empower users.
-  </p>
-
-
-  <h3>🔍 Results</h3>
-  <p>Run detection on images. Each card shows predicted label, confidence, and probabilities.</p>
-
-
-  <h3>📊 Logs</h3>
-  <p>Every detection is recorded with a timestamp. The Logs panel displays a pie chart of Fake vs Real probabilities and a console trace.</p>
-
-
-  <h3>📈 Analytics</h3>
-  <p>Detections feed into a bar chart and grid table. Confidence scores and probabilities are tracked across all images.</p>
-
-
-  <h3>⚙️ Features</h3>
-  <p>This README explains VeraX’s architecture, workflow, and roadmap. It is fully customizable with themes, extensions, and integrations.</p>
-
-
-  <h3>🧠 How It Works</h3>
-  <ul>
-    <li>Upload or load images (supports large sets like 1090 images).</li>
-    <li>Click <strong>Detect</strong> to run AI classification.</li>
-    <li>Results update in real‑time with confidence and probabilities.</li>
-    <li>Logs capture pie charts and console entries.</li>
-    <li>Analytics builds bar charts and grid summaries.</li>
-  </ul>
-
-
-  <h3>🚀 Built by Khadija</h3>
-  <p>VeraX blends sci‑fi aesthetics with forensic rigor. It is designed for judges, users, and leaders who demand legendary results.</p>
-</div>
-
-
             <div class="container py-4">
-              <div class="features-grid">
-                <!-- Agent mode -->
-                <div class="feature-card">
-                  <div class="feature-header">
-                    <h4>Agent mode</h4>
-                    <span>Collaborative detection workflows</span>
-                  </div>
-                  <p>Enable multiple detection agents (image, video, metadata) to work together in a shared workspace with isolated logs and contexts.</p>
-                  <div class="feature-actions">
-                    <button class="ghost-btn" disabled>Build with agent mode</button>
-                  </div>
-                </div>
+              <div class="readme-container">
+                <h2 class="readme-title">📘 VeraX README</h2>
+                <p class="readme-intro">
+                  VeraX is a deep fake detection dashboard built for forensic credibility and cinematic clarity.
+                  It combines AI detection, neon visualization, and enterprise‑grade logging to empower users.
+                </p>
 
+                <h3>🔍 Results</h3>
+                <p>Run detection on images. Each card shows predicted label, confidence, and probabilities.</p>
 
-                <!-- Expert on your dataset -->
-                <div class="feature-card">
-                  <div class="feature-header">
-                    <h4>An expert on your dataset</h4>
-                    <span>Ask anything</span>
-                  </div>
-                  <p>Query images by predicted label, confidence thresholds, or provenance. Export subsets for audit, training, or reporting.</p>
-                  <div class="feature-actions">
-                    <button class="ghost-btn" disabled>Open dataset Q&A</button>
-                  </div>
-                </div>
+                <h3>📊 Logs</h3>
+                <p>Every detection is recorded with a timestamp. The Logs panel displays a pie chart of Fake vs Real probabilities and a console trace.</p>
 
+                <h3>📈 Analytics</h3>
+                <p>Detections feed into a bar chart and grid table. Confidence scores and probabilities are tracked across all images.</p>
 
-                <!-- Next edit suggestions -->
-                <div class="feature-card">
-                  <div class="feature-header">
-                    <h4>Next analysis suggestions</h4>
-                    <span>Smart follow-ups</span>
-                  </div>
-                  <p>VeraX proposes next actions (re-scan, deeper forensic features, outlier checks) based on current results and confidence spread.</p>
-                  <div class="feature-actions">
-                    <button class="ghost-btn" disabled>View suggestions</button>
-                  </div>
-                </div>
+                <h3>⚙️ Features</h3>
+                <p>This README explains VeraX’s architecture, workflow, and roadmap. It is fully customizable with themes, extensions, and integrations.</p>
 
+                <h3>🧠 How It Works</h3>
+                <ul>
+                  <li>Load images (supports large sets like 1090 images).</li>
+                  <li>Click <strong>Detect</strong> to run AI classification.</li>
+                  <li>Results update in real‑time with confidence and probabilities.</li>
+                  <li>Logs capture pie charts and console entries.</li>
+                  <li>Analytics builds bar charts and grid summaries.</li>
+                </ul>
 
-                <!-- Extensions -->
-                <div class="feature-card">
-                  <div class="feature-header">
-                    <h4>Extend VeraX</h4>
-                    <span>Integrations</span>
-                  </div>
-                  <p>Plug in exporters (CSV/PDF), metadata parsers, provenance APIs, or external forensic libraries to enhance your workflow.</p>
-                  <div class="feature-actions">
-                    <button class="ghost-btn" disabled>Browse extensions</button>
-                  </div>
-                </div>
-
-
-                <!-- Supported inputs -->
-                <div class="feature-card">
-                  <div class="feature-header">
-                    <h4>Detect in any media</h4>
-                    <span>Images, frames, streams</span>
-                  </div>
-                  <p>Supports images and can be extended to video frames and live streams; batch modes handle large collections like your 1090 images.</p>
-                  <div class="feature-actions">
-                    <button class="ghost-btn" disabled>Media settings</button>
-                  </div>
-                </div>
-
-
-                <!-- Customizable -->
-                <div class="feature-card">
-                  <div class="feature-header">
-                    <h4>Fully customizable</h4>
-                    <span>Themes & layout</span>
-                  </div>
-                  <p>Switch between VS Code-inspired panels or pure neon holographic mode. Adjust borders, glow intensity, and motion.</p>
-                  <div class="feature-actions">
-                    <button class="ghost-btn" disabled>Theme options</button>
-                  </div>
-                </div>
-
-
-                <!-- Anywhere -->
-                <div class="feature-card">
-                  <div class="feature-header">
-                    <h4>Analyze anywhere</h4>
-                    <span>Local or remote</span>
-                  </div>
-                  <p>Run locally or on remote instances. Export shareable results with audit trails, keeping enterprise credibility intact.</p>
-                  <div class="feature-actions">
-                    <button class="ghost-btn" disabled>Deployment guide</button>
-                  </div>
-                </div>
+                <h3>🚀 Built by Khadija</h3>
+                <p>VeraX blends sci‑fi aesthetics with forensic rigor. It is designed for judges, users, and leaders who demand legendary results.</p>
               </div>
             </div>
           </div>
@@ -379,5 +192,3 @@ function updateAnalytics(imageURLPath, data) {
     </div>
   </body>
 </html>
-
-

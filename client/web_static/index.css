@@ -17,7 +17,6 @@ body {
   overflow-x: hidden;
 }
 
-
 /* Neon grid background layers */
 .grid-bg {
   position: fixed; top:0; left:0; width:100%; height:100%; z-index:-1;
@@ -31,7 +30,6 @@ body {
 @keyframes moveGrid1 { 0% {background-position:0 0;} 100% {background-position:40px 40px;} }
 @keyframes moveGrid2 { 0% {background-position:0 0;} 100% {background-position:80px 80px;} }
 @keyframes moveGrid3 { 0% {background-position:0 0;} 100% {background-position:120px 120px;} }
-
 
 /* Layout */
 .dashboard { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
@@ -53,14 +51,12 @@ body {
   transform: translateX(4px);
 }
 
-
 .topbar { background: var(--panel); border-bottom: 2px solid var(--border-strong); padding: 18px; text-align: center; }
 .bordered-title {
   border: 2px solid var(--neon-cyan);
   padding: 10px 16px; display: inline-block; margin: 0 auto;
   text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-magenta);
 }
-
 
 /* Panels */
 .content { padding: 16px; }
@@ -69,7 +65,6 @@ body {
   transition: all 0.6s ease-in-out; position: relative;
 }
 .panel.active { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
-
 
 /* Cards (VS Code + VeraX) */
 .verax-card {
@@ -81,7 +76,6 @@ body {
 }
 .verax-img { border-bottom: 1px solid rgba(255,255,255,0.06); }
 
-
 /* Prediction box */
 .prediction-box {
   padding: 12px; font-family: "Share Tech Mono", monospace; background: rgba(0,0,0,0.55);
@@ -90,7 +84,6 @@ body {
 .confidence-bar { width: 100%; height: 8px; background: rgba(255,255,255,0.08); border-radius: 6px; overflow: hidden; margin: 8px 0 6px; }
 .confidence-bar > div { height: 100%; width: 0%; background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta)); box-shadow: 0 0 12px var(--neon-cyan); }
 .prob-line { margin: 3px 0; }
-
 
 /* Analytics + Logs panels */
 .verax-panel {
@@ -105,7 +98,6 @@ body {
 .panel-subtitle { color: rgba(255,255,255,0.6); font-size: 0.9rem; }
 .panel-body { padding: 14px; }
 
-
 .logs {
   height: 280px; overflow-y: auto; font-family: "Share Tech Mono", monospace; color: var(--neon-cyan);
   background: rgba(0,0,0,0.85); border: 2px solid var(--neon-magenta); border-radius: 12px;
@@ -114,45 +106,7 @@ body {
 .logs::-webkit-scrollbar { width: 10px; }
 .logs::-webkit-scrollbar-thumb { background: linear-gradient(var(--neon-cyan), var(--neon-magenta)); border-radius: 8px; }
 
-
 /* Features grid (VS Code style) */
-.readme-container {
-  background: rgba(16,16,19,0.92);
-  border: 2px solid var(--neon-cyan);
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 0 20px var(--neon-magenta), 0 0 30px var(--neon-cyan);
-  font-family: "Orbitron", sans-serif;
-  color: #fff;
-}
-
-
-.readme-title {
-  color: var(--neon-cyan);
-  text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-magenta);
-  margin-bottom: 12px;
-}
-
-
-.readme-intro {
-  font-size: 1.1rem;
-  margin-bottom: 18px;
-  color: rgba(255,255,255,0.85);
-}
-
-
-.readme-container h3 {
-  margin-top: 16px;
-  color: var(--neon-magenta);
-}
-
-
-.readme-container ul {
-  margin-left: 20px;
-  list-style: square;
-}
-
-
 .features-grid {
   display: grid; gap: 16px;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -168,7 +122,6 @@ body {
   border: 1px dashed rgba(255,255,255,0.35); border-radius: 8px; padding: 8px 10px;
   cursor: not-allowed;
 }
-
 
 /* Overlay (module transitions) */
 #loadingOverlay {
@@ -188,7 +141,6 @@ body {
   text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-magenta);
 }
 
-
 /* Boot overlay */
 #bootOverlay {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -202,4 +154,112 @@ body {
 }
 @keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
 
+/* === Add-on Styles === */
+
+/* Detect button (refined to match palette) */
+.holo-button {
+  background: rgba(0,255,255,0.15);
+  color: var(--neon-cyan);
+  border: 1px solid var(--neon-cyan);
+  font-weight: 600;
+  font-family: "Orbitron", sans-serif;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+.holo-button:hover {
+  background: rgba(0,255,255,0.3);
+  box-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-magenta);
+  transform: scale(1.05);
+}
+
+/* Image card spacing refinement */
+.verax-card {
+  margin: 0 auto;
+  max-width: 320px;
+  padding: 10px;
+}
+
+/* Logs pie chart container */
+.logs-chart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 16px;
+}
+#logsPieChart {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  box-shadow: 0 0 20px var(--neon-magenta);
+  border-radius: 12px;
+}
+
+/* Analytics bar chart + grid */
+.analytics-chart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#analyticsBarChart {
+  width: 100%;
+  max-width: 700px;
+  height: auto;
+  box-shadow: 0 0 20px var(--neon-magenta);
+  border-radius: 12px;
+}
+.analytics-grid-container {
+  margin-top: 20px;
+}
+#analyticsGrid {
+  font-family: "Share Tech Mono", monospace;
+  font-size: 0.95rem;
+  border: none;
+  box-shadow: 0 0 12px var(--neon-cyan);
+}
+#analyticsGrid th {
+  background: var(--neon-cyan);
+  color: #000;
+  text-align: center;
+  font-weight: bold;
+}
+#analyticsGrid td {
+  background: rgba(0,0,0,0.7);
+  color: var(--neon-cyan);
+  text-align: center;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+#analyticsGrid tr:hover {
+  background: rgba(0,255,255,0.1);
+  box-shadow: inset 0 0 10px var(--neon-magenta);
+}
+
+/* README container in Features panel */
+.readme-container {
+  background: var(--panel);
+  border: 2px solid var(--neon-cyan);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 0 20px var(--neon-magenta), 0 0 30px var(--neon-cyan);
+  font-family: "Orbitron", sans-serif;
+  color: #fff;
+}
+.readme-title {
+  color: var(--neon-cyan);
+  text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-magenta);
+  margin-bottom: 12px;
+}
+.readme-intro {
+  font-size: 1.1rem;
+  margin-bottom: 18px;
+  color: rgba(255,255,255,0.85);
+}
+.readme-container h3 {
+  margin-top: 16px;
+  color: var(--neon-magenta);
+}
+.readme-container ul {
+  margin-left: 20px;
+  list-style: square;
+}
 
