@@ -54,42 +54,11 @@ document.querySelectorAll(".sidebar a").forEach(link => {
   });
 });
 
-// Original detection logic preserved
-function checkImage(imageFullPath, imageURLPath) {
-  fetch("/check", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ image: imageFullPath }),
-  })
-  .then(resp => resp.json())
-  .then(data => {
-    document.getElementById("predicted-label-" + imageURLPath).textContent =
-      data.predicted_label || "Unknown";
-    document.getElementById("confidence-" + imageURLPath).textContent =
-      data.confidence ? data.confidence.toFixed(4) : "N/A";
-    document.getElementById("fake-prob-" + imageURLPath).textContent =
-      data.fake_probability ? data.fake_probability.toFixed(4) : "N/A";
-    document.getElementById("real-prob-" + imageURLPath).textContent =
-      data.real_probability ? data.real_probability.toFixed(4) : "N/A";
-
-    const bar = document.getElementById("confidence-fill-" + imageURLPath);
-    if (bar && data.confidence !== undefined) {
-      bar.style.width = (data.confidence * 100).toFixed(2) + "%";
-    }
-
-    // Save result for Logs/Analytics later
-    if (!window.veraxResults) window.veraxResults = {};
-    window.veraxResults[imageURLPath] = data;
-  });
-}
 // === Logs Pie Chart ===
-let logsChart; // global chart instance
-
+let logsChart;
 function updateLogs(imageURLPath, data) {
-  // Add timestamped log entry
   addLog(`Image ${imageURLPath} → ${data.predicted_label} (Confidence: ${data.confidence.toFixed(4)})`);
 
-  // Prepare pie chart data
   const ctx = document.getElementById("logsPieChart");
   if (!ctx) return;
 
@@ -97,8 +66,8 @@ function updateLogs(imageURLPath, data) {
     labels: ["Fake Probability", "Real Probability"],
     datasets: [{
       data: [
-        data.fake_probability ? data.fake_probability.toFixed(4) * 100 : 0,
-        data.real_probability ? data.real_probability.toFixed(4) * 100 : 0
+        data.fake_probability ? data.fake_probability * 100 : 0,
+        data.real_probability ? data.real_probability * 100 : 0
       ],
       backgroundColor: ["#ff0040", "#00ff80"],
       borderColor: ["#fff", "#fff"],
@@ -106,10 +75,7 @@ function updateLogs(imageURLPath, data) {
     }]
   };
 
-  // Destroy old chart if exists
   if (logsChart) logsChart.destroy();
-
-  // Create new pie chart
   logsChart = new Chart(ctx, {
     type: "pie",
     data: chartData,
@@ -129,18 +95,109 @@ function updateLogs(imageURLPath, data) {
     }
   });
 }
-updateLogs(imageURLPath, data);
 
-// Auto-trigger detection for all images (keeps your 1090 flow; heavy but cinematic)
+// === Analytics Bar Chart + Grid ===
+let analyticsChart;
+function updateAnalytics(imageURLPath, data) {
+  if (!window.analyticsData) window.analyticsData = [];
+  window.analyticsData.push({
+    id: imageURLPath,
+    label: data.predicted_label,
+    confidence: data.confidence,
+    fake: data.fake_probability,
+    real: data.real_probability
+  });
+
+  const ctx = document.getElementById("analyticsBarChart");
+  if (ctx) {
+    const labels = window.analyticsData.map(d => d.id);
+    const confidences = window.analyticsData.map(d => (d.confidence * 100).toFixed(2));
+
+    if (analyticsChart) analyticsChart.destroy();
+    analyticsChart = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: labels,
+        datasets: [{
+          label: "Confidence %",
+          data: confidences,
+          backgroundColor: "#0ff",
+          borderColor: "#f0f",
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { labels: { color: "#0ff", font: { family: "Orbitron", size: 14 } } },
+          title: {
+            display: true,
+            text: "Detection Confidence per Image",
+            color: "#f0f",
+            font: { family: "Orbitron", size: 16 }
+          }
+        },
+        scales: {
+          x: { ticks: { color: "#f0f" }, grid: { color: "rgba(0,255,255,0.2)" } },
+          y: { ticks: { color: "#f0f" }, grid: { color: "rgba(240,0,255,0.2)" }, min: 0, max: 100 }
+        }
+      }
+    });
+  }
+
+  const tbody = document.querySelector("#analyticsGrid tbody");
+  if (tbody) {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${imageURLPath}</td>
+      <td>${data.predicted_label}</td>
+      <td>${(data.confidence * 100).toFixed(2)}%</td>
+      <td>${(data.fake_probability * 100).toFixed(2)}%</td>
+      <td>${(data.real_probability * 100).toFixed(2)}%</td>
+    `;
+    tbody.appendChild(row);
+  }
+}
+
+// === Detection logic extended ===
+function checkImage(imageFullPath, imageURLPath) {
+  fetch("/check", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ image: imageFullPath }),
+  })
+  .then(resp => resp.json())
+  .then(data => {
+    const pred = document.getElementById("predicted-label-" + imageURLPath);
+    const conf = document.getElementById("confidence-" + imageURLPath);
+    const fake = document.getElementById("fake-prob-" + imageURLPath);
+    const real = document.getElementById("real-prob-" + imageURLPath);
+    const bar = document.getElementById("confidence-fill-" + imageURLPath);
+
+    if (pred) pred.textContent = data.predicted_label || "Unknown";
+    if (conf) conf.textContent = data.confidence ? data.confidence.toFixed(4) : "N/A";
+    if (fake) fake.textContent = data.fake_probability ? data.fake_probability.toFixed(4) : "N/A";
+    if (real) real.textContent = data.real_probability ? data.real_probability.toFixed(4) : "N/A";
+    if (bar && data.confidence !== undefined) {
+      bar.style.width = (data.confidence * 100).toFixed(2) + "%";
+    }
+
+    // Update Logs and Analytics
+    updateLogs(imageURLPath, data);
+    updateAnalytics(imageURLPath, data);
+  });
+}
+
+// Auto-trigger detection for all images (optional, heavy)
 window.addEventListener("load", () => {
-  // The template loop ensures we call checkImage for each item in image_list
-  // This block must remain inside a Jinja/Flask template to render correctly:
-  // {% for image in image_list %}
-  // checkImage("{{ image.image_full_path }}", "{{ image.image_url }}");
-  // {% endfor %}
+  if (window.image_list && Array.isArray(window.image_list)) {
+    window.image_list.forEach(img => {
+      checkImage(img.image_full_path, img.image_url);
+    });
+  }
 });
 
-// Analytics chart (VS Code glow)
+// Accuracy chart (static demo chart)
 window.addEventListener("DOMContentLoaded", () => {
   const ctx = document.getElementById("accuracyChart");
   if (!ctx) return;
@@ -173,12 +230,14 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// Logs helper (VS Code terminal feel)
+// Logs helper
 function addLog(message) {
   const logOutput = document.getElementById("logOutput");
   if (logOutput) {
-    const timestamp = new Date().toLocaleTimeString();
-    logOutput.textContent += `\n[${timestamp}] ${message}`;
+    const entry = document.createElement("div");
+    entry.className = "log-entry";
+    entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+    logOutput.appendChild(entry);
     logOutput.scrollTop = logOutput.scrollHeight;
   }
 }
