@@ -1,3 +1,4 @@
+
 // Boot overlay auto-hide after animation
 window.addEventListener("DOMContentLoaded", () => {
   setTimeout(() => {
@@ -199,6 +200,9 @@ function addLog(message) {
     logOutput.scrollTop = logOutput.scrollHeight;
   }
 }
+
+
+
 
 
 

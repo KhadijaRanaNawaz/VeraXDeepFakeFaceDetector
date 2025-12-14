@@ -78,17 +78,14 @@
                 {% for image in image_list %}
                 <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                   <div class="card verax-card">
-                    <img src="{{ url_for('static', filename=image.image_url) }}"
-     alt="Image to check"
-     class="img-fluid verax-img" />
-
-<div class="text-center mt-2">
+                    <img
+                    <div class="text-center mt-2">
   <button class="btn btn-primary holo-button"
     onclick="checkImage('{{ image.image_full_path }}', '{{ image.image_url }}')">
     Detect
   </button>
 </div>
-                
+updateAnalytics(imageURLPath, data);
 <div id="outer-{{ image.image_url }}" class="prediction-box mt-2">
   <div><strong>Predicted:</strong> <span id="predicted-label-{{ image.image_url }}"></span></div>
   <div><strong>Confidence:</strong> <span id="confidence-{{ image.image_url }}"></span></div>
@@ -118,26 +115,19 @@
 
 
           <!-- ANALYTICS: VS Code style glowing chart -->
-          
           <div id="analyticsPanel" class="panel">
-  <div class="container py-4">
-    <div class="card verax-panel">
-      <div class="panel-header">...</div>
-      <div class="panel-body">
-        <canvas id="accuracyChart"></canvas>
-
-        <div class="analytics-chart-container mb-4">
-          <canvas id="analyticsBarChart" width="600" height="400"></canvas>
-        </div>
-
-        <div class="analytics-grid-container">
-          <table id="analyticsGrid">...</table>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
+            <div class="container py-4">
+              <div class="card verax-panel">
+                <div class="panel-header">
+                  <h3 class="panel-title">Analytics Core</h3>
+                  <span class="panel-subtitle">Accuracy trends & confidence distribution</span>
+                </div>
+                <div class="panel-body">
+                  <canvas id="accuracyChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
 <div class="analytics-chart-container mb-4">
   <canvas id="analyticsBarChart" width="600" height="400"></canvas>
 </div>
@@ -250,11 +240,9 @@ function updateAnalytics(imageURLPath, data) {
 
           <!-- FEATURES: VS Code sections adapted to VeraX -->
           <div id="featuresPanel" class="panel">
-  <div class="container py-4">
-    <div class="readme-container mb-4">...</div>
-    <div class="features-grid">...</div>
-  </div>
-</div>
+            <div class="readme-container">
+  <h2 class="readme-title">📘 VeraX README</h2>
+  <p class="readme-intro">
     VeraX is a deep fake detection dashboard built for forensic credibility and cinematic clarity.
     It combines AI detection, neon visualization, and enterprise‑grade logging to empower users.
   </p>
@@ -286,7 +274,7 @@ function updateAnalytics(imageURLPath, data) {
   </ul>
 
 
-  <h3>🚀 Built by Khadija Rana Nawaz</h3>
+  <h3>🚀 Built by Khadija</h3>
   <p>VeraX blends sci‑fi aesthetics with forensic rigor. It is designed for judges, users, and leaders who demand legendary results.</p>
 </div>
 
@@ -391,3 +379,5 @@ function updateAnalytics(imageURLPath, data) {
     </div>
   </body>
 </html>
+
+
