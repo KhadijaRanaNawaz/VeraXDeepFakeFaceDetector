@@ -169,99 +169,79 @@
                 <p class="readme-intro">
                   <!-- FEATURES: VS Code sections adapted to VeraX -->
           <div id="featuresPanel" class="panel">
-            <div class="readme-container">
-  <h2 class="readme-title">📘 VeraX README</h2>
-  <p class="readme-intro">
-    VeraX is a deep fake detection dashboard built for forensic credibility and cinematic clarity.
-    It combines AI detection, neon visualization, and enterprise‑grade logging to empower users.
+  <div class="container py-4">
 
-  <h3>🔍 Results</h3>
-  <p>Run detection on images. Each card shows predicted label, confidence, and probabilities.</p>
+    <!-- README inside container -->
+    <div class="readme-container mb-4">
+      <h2 class="readme-title">📘 VeraX README</h2>
+      <p class="readme-intro">
+        VeraX is a deep fake detection dashboard built for forensic credibility and cinematic clarity.
+        It combines AI detection, neon visualization, and enterprise‑grade logging to empower users.
+      </p> <!-- ✅ properly closed -->
 
+      <h3>🔍 Results</h3>
+      <p>Run detection on images. Each card shows predicted label, confidence, and probabilities.</p>
 
-  <h3>📊 Logs</h3>
-  <p>Every detection is recorded with a timestamp. The Logs panel displays a pie chart of Fake vs Real probabilities and a console trace.</p>
+      <h3>📊 Logs</h3>
+      <p>Every detection is recorded with a timestamp. The Logs panel displays a pie chart of Fake vs Real probabilities and a console trace.</p>
 
+      <h3>📈 Analytics</h3>
+      <p>Detections feed into a bar chart and grid table. Confidence scores and probabilities are tracked across all images.</p>
 
-  <h3>📈 Analytics</h3>
-  <p>Detections feed into a bar chart and grid table. Confidence scores and probabilities are tracked across all images.</p>
+      <h3>⚙️ Features</h3>
+      <p>This README explains VeraX’s architecture, workflow, and roadmap. It is fully customizable with themes, extensions, and integrations.</p>
 
+      <h3>🧠 How It Works</h3>
+      <ul>
+        <li>Upload or load images (supports large sets like 1090 images).</li>
+        <li>Click <strong>Detect</strong> to run AI classification.</li>
+        <li>Results update in real‑time with confidence and probabilities.</li>
+        <li>Logs capture pie charts and console entries.</li>
+        <li>Analytics builds bar charts and grid summaries.</li>
+      </ul>
 
-  <h3>⚙️ Features</h3>
-  <p>This README explains VeraX’s architecture, workflow, and roadmap. It is fully customizable with themes, extensions, and integrations.</p>
+      <h3>🚀 Built by Khadija Rana Nawaz</h3>
+      <p>VeraX blends sci‑fi aesthetics with forensic rigor. It is designed for judges, users, and leaders who demand legendary results.</p>
+    </div>
 
+    <!-- Feature cards -->
+    <div class="features-grid">
+      <!-- Agent mode -->
+      <div class="feature-card">
+        <div class="feature-header">
+          <h4>Agent mode</h4>
+          <span>Collaborative detection workflows</span>
+        </div>
+        <p>Enable multiple detection agents (image, video, metadata) to work together in a shared workspace with isolated logs and contexts.</p>
+        <div class="feature-actions">
+          <button class="ghost-btn" disabled>Build with agent mode</button>
+        </div>
+      </div>
 
-  <h3>🧠 How It Works</h3>
-  <ul>
-    <li>Upload or load images (supports large sets like 1090 images).</li>
-    <li>Click <strong>Detect</strong> to run AI classification.</li>
-    <li>Results update in real‑time with confidence and probabilities.</li>
-    <li>Logs capture pie charts and console entries.</li>
-    <li>Analytics builds bar charts and grid summaries.</li>
-  </ul>
+      <!-- Expert on your dataset -->
+      <div class="feature-card">
+        <div class="feature-header">
+          <h4>An expert on your dataset</h4>
+          <span>Ask anything</span>
+        </div>
+        <p>Query images by predicted label, confidence thresholds, or provenance. Export subsets for audit, training, or reporting.</p>
+        <div class="feature-actions">
+          <button class="ghost-btn" disabled>Open dataset Q&A</button>
+        </div>
+      </div>
 
-
-  <h3>🚀 Built by Khadija</h3>
-  <p>VeraX blends sci‑fi aesthetics with forensic rigor. It is designed for judges, users, and leaders who demand legendary results.</p>
-</div>
-
-
-            <div class="container py-4">
-              <div class="features-grid">
-                <!-- Agent mode -->
-                <div class="feature-card">
-                  <div class="feature-header">
-                    <h4>Agent mode</h4>
-                    <span>Collaborative detection workflows</span>
-                  </div>
-                  <p>Enable multiple detection agents (image, video, metadata) to work together in a shared workspace with isolated logs and contexts.</p>
-                  <div class="feature-actions">
-                    <button class="ghost-btn" disabled>Build with agent mode</button>
-                  </div>
-                </div>
-
-
-                <!-- Expert on your dataset -->
-                <div class="feature-card">
-                  <div class="feature-header">
-                    <h4>An expert on your dataset</h4>
-                    <span>Ask anything</span>
-                  </div>
-                  <p>Query images by predicted label, confidence thresholds, or provenance. Export subsets for audit, training, or reporting.</p>
-                  <div class="feature-actions">
-                    <button class="ghost-btn" disabled>Open dataset Q&A</button>
-                  </div>
-                </div>
-
-
-                <!-- Next edit suggestions -->
-                <div class="feature-card">
-                  <div class="feature-header">
-                    <h4>Next analysis suggestions</h4>
-                    <span>Smart follow-ups</span>
-                  </div>
-                  <p>VeraX proposes next actions (re-scan, deeper forensic features, outlier checks) based on current results and confidence spread.</p>
-                  <div class="feature-actions">
-                    <button class="ghost-btn" disabled>View suggestions</button>
-                  </div>
-                </div>
-
-                </p>
-                <!-- keep all your README subsections here -->
-              </div>
-
-              <!-- Feature cards -->
-              <div class="features-grid">
-                <!-- keep all your feature cards here -->
-              </div>
-
-            </div>
-          </div>
-        </section>
+      <!-- Next edit suggestions -->
+      <div class="feature-card">
+        <div class="feature-header">
+          <h4>Next analysis suggestions</h4>
+          <span>Smart follow-ups</span>
+        </div>
+        <p>VeraX proposes next actions (re-scan, deeper forensic features, outlier checks) based on current results and confidence spread.</p>
+        <div class="feature-actions">
+          <button class="ghost-btn" disabled>View suggestions</button>
+        </div>
       </div>
     </div>
-  </body>
-</html>
 
-
-
+  </div>
+</div>
