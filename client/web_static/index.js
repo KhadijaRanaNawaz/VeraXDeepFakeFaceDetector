@@ -63,21 +63,73 @@ function checkImage(imageFullPath, imageURLPath) {
   })
   .then(resp => resp.json())
   .then(data => {
-    const pred = document.getElementById("predicted-label-" + imageURLPath);
-    const conf = document.getElementById("confidence-" + imageURLPath);
-    const fake = document.getElementById("fake-prob-" + imageURLPath);
-    const real = document.getElementById("real-prob-" + imageURLPath);
-    const bar = document.getElementById("confidence-fill-" + imageURLPath);
+    document.getElementById("predicted-label-" + imageURLPath).textContent =
+      data.predicted_label || "Unknown";
+    document.getElementById("confidence-" + imageURLPath).textContent =
+      data.confidence ? data.confidence.toFixed(4) : "N/A";
+    document.getElementById("fake-prob-" + imageURLPath).textContent =
+      data.fake_probability ? data.fake_probability.toFixed(4) : "N/A";
+    document.getElementById("real-prob-" + imageURLPath).textContent =
+      data.real_probability ? data.real_probability.toFixed(4) : "N/A";
 
-    if (pred) pred.textContent = data.predicted_label || "Unknown";
-    if (conf) conf.textContent = data.confidence ? data.confidence.toFixed(4) : "N/A";
-    if (fake) fake.textContent = data.fake_probability ? data.fake_probability.toFixed(4) : "N/A";
-    if (real) real.textContent = data.real_probability ? data.real_probability.toFixed(4) : "N/A";
+    const bar = document.getElementById("confidence-fill-" + imageURLPath);
     if (bar && data.confidence !== undefined) {
       bar.style.width = (data.confidence * 100).toFixed(2) + "%";
     }
+
+    // Save result for Logs/Analytics later
+    if (!window.veraxResults) window.veraxResults = {};
+    window.veraxResults[imageURLPath] = data;
   });
 }
+// === Logs Pie Chart ===
+let logsChart; // global chart instance
+
+function updateLogs(imageURLPath, data) {
+  // Add timestamped log entry
+  addLog(`Image ${imageURLPath} → ${data.predicted_label} (Confidence: ${data.confidence.toFixed(4)})`);
+
+  // Prepare pie chart data
+  const ctx = document.getElementById("logsPieChart");
+  if (!ctx) return;
+
+  const chartData = {
+    labels: ["Fake Probability", "Real Probability"],
+    datasets: [{
+      data: [
+        data.fake_probability ? data.fake_probability.toFixed(4) * 100 : 0,
+        data.real_probability ? data.real_probability.toFixed(4) * 100 : 0
+      ],
+      backgroundColor: ["#ff0040", "#00ff80"],
+      borderColor: ["#fff", "#fff"],
+      borderWidth: 2
+    }]
+  };
+
+  // Destroy old chart if exists
+  if (logsChart) logsChart.destroy();
+
+  // Create new pie chart
+  logsChart = new Chart(ctx, {
+    type: "pie",
+    data: chartData,
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          labels: { color: "#0ff", font: { family: "Orbitron", size: 14 } }
+        },
+        title: {
+          display: true,
+          text: `Detection Result for ${imageURLPath}`,
+          color: "#f0f",
+          font: { family: "Orbitron", size: 16 }
+        }
+      }
+    }
+  });
+}
+updateLogs(imageURLPath, data);
 
 // Auto-trigger detection for all images (keeps your 1090 flow; heavy but cinematic)
 window.addEventListener("load", () => {

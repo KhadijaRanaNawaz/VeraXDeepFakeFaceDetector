@@ -69,6 +69,20 @@
                 <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                   <div class="card verax-card">
                     <img
+                    <div class="text-center mt-2">
+  <button class="btn btn-primary holo-button"
+    onclick="checkImage('{{ image.image_full_path }}', '{{ image.image_url }}')">
+    Detect
+  </button>
+</div>
+updateAnalytics(imageURLPath, data);
+<div id="outer-{{ image.image_url }}" class="prediction-box mt-2">
+  <div><strong>Predicted:</strong> <span id="predicted-label-{{ image.image_url }}"></span></div>
+  <div><strong>Confidence:</strong> <span id="confidence-{{ image.image_url }}"></span></div>
+  <div class="confidence-bar"><div id="confidence-fill-{{ image.image_url }}"></div></div>
+  <div><strong>Fake:</strong> <span id="fake-prob-{{ image.image_url }}"></span></div>
+  <div><strong>Real:</strong> <span id="real-prob-{{ image.image_url }}"></span></div>
+</div>
                       src="{{ url_for('static', filename=image.image_url) }}"
                       alt="Image to check"
                       class="img-fluid verax-img"
@@ -103,7 +117,24 @@
               </div>
             </div>
           </div>
+<div class="analytics-chart-container mb-4">
+  <canvas id="analyticsBarChart" width="600" height="400"></canvas>
+</div>
 
+<div class="analytics-grid-container">
+  <table id="analyticsGrid" class="table table-dark table-striped table-bordered">
+    <thead>
+      <tr>
+        <th>Image ID</th>
+        <th>Predicted Label</th>
+        <th>Confidence</th>
+        <th>Fake %</th>
+        <th>Real %</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
           <!-- LOGS: Neon console -->
           <div id="logsPanel" class="panel">
             <div class="container py-4">
@@ -113,14 +144,116 @@
                   <span class="panel-subtitle">System events & detection traces</span>
                 </div>
                 <div class="panel-body">
+                  <div class="logs-chart-container">
+  <canvas id="logsPieChart" width="400" height="400"></canvas>
+</div>
+
                   <pre id="logOutput" class="logs">[System] Awaiting events...</pre>
                 </div>
               </div>
             </div>
           </div>
+// === Analytics Bar Chart + Grid ===
+let analyticsChart;
+
+function updateAnalytics(imageURLPath, data) {
+  // Prepare dataset
+  if (!window.analyticsData) window.analyticsData = [];
+  window.analyticsData.push({
+    id: imageURLPath,
+    label: data.predicted_label,
+    confidence: data.confidence,
+    fake: data.fake_probability,
+    real: data.real_probability
+  });
+
+  // Update bar chart
+  const ctx = document.getElementById("analyticsBarChart");
+  if (ctx) {
+    const labels = window.analyticsData.map(d => d.id);
+    const confidences = window.analyticsData.map(d => (d.confidence * 100).toFixed(2));
+
+    if (analyticsChart) analyticsChart.destroy();
+    analyticsChart = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: labels,
+        datasets: [{
+          label: "Confidence %",
+          data: confidences,
+          backgroundColor: "#0ff",
+          borderColor: "#f0f",
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { labels: { color: "#0ff", font: { family: "Orbitron", size: 14 } } },
+          title: {
+            display: true,
+            text: "Detection Confidence per Image",
+            color: "#f0f",
+            font: { family: "Orbitron", size: 16 }
+          }
+        },
+        scales: {
+          x: { ticks: { color: "#f0f" }, grid: { color: "rgba(0,255,255,0.2)" } },
+          y: { ticks: { color: "#f0f" }, grid: { color: "rgba(240,0,255,0.2)" }, min: 0, max: 100 }
+        }
+      }
+    });
+  }
+
+  // Update grid table
+  const tbody = document.querySelector("#analyticsGrid tbody");
+  if (tbody) {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${imageURLPath}</td>
+      <td>${data.predicted_label}</td>
+      <td>${(data.confidence * 100).toFixed(2)}%</td>
+      <td>${(data.fake_probability * 100).toFixed(2)}%</td>
+      <td>${(data.real_probability * 100).toFixed(2)}%</td>
+    `;
+    tbody.appendChild(row);
+  }
+}
 
           <!-- FEATURES: VS Code sections adapted to VeraX -->
           <div id="featuresPanel" class="panel">
+            <div class="readme-container">
+  <h2 class="readme-title">📘 VeraX README</h2>
+  <p class="readme-intro">
+    VeraX is a deep fake detection dashboard built for forensic credibility and cinematic clarity.
+    It combines AI detection, neon visualization, and enterprise‑grade logging to empower users.
+  </p>
+
+  <h3>🔍 Results</h3>
+  <p>Run detection on images. Each card shows predicted label, confidence, and probabilities.</p>
+
+  <h3>📊 Logs</h3>
+  <p>Every detection is recorded with a timestamp. The Logs panel displays a pie chart of Fake vs Real probabilities and a console trace.</p>
+
+  <h3>📈 Analytics</h3>
+  <p>Detections feed into a bar chart and grid table. Confidence scores and probabilities are tracked across all images.</p>
+
+  <h3>⚙️ Features</h3>
+  <p>This README explains VeraX’s architecture, workflow, and roadmap. It is fully customizable with themes, extensions, and integrations.</p>
+
+  <h3>🧠 How It Works</h3>
+  <ul>
+    <li>Upload or load images (supports large sets like 1090 images).</li>
+    <li>Click <strong>Detect</strong> to run AI classification.</li>
+    <li>Results update in real‑time with confidence and probabilities.</li>
+    <li>Logs capture pie charts and console entries.</li>
+    <li>Analytics builds bar charts and grid summaries.</li>
+  </ul>
+
+  <h3>🚀 Built by Khadija</h3>
+  <p>VeraX blends sci‑fi aesthetics with forensic rigor. It is designed for judges, users, and leaders who demand legendary results.</p>
+</div>
+
             <div class="container py-4">
               <div class="features-grid">
                 <!-- Agent mode -->

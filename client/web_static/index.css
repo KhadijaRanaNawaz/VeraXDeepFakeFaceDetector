@@ -107,6 +107,38 @@ body {
 .logs::-webkit-scrollbar-thumb { background: linear-gradient(var(--neon-cyan), var(--neon-magenta)); border-radius: 8px; }
 
 /* Features grid (VS Code style) */
+.readme-container {
+  background: rgba(16,16,19,0.92);
+  border: 2px solid var(--neon-cyan);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 0 20px var(--neon-magenta), 0 0 30px var(--neon-cyan);
+  font-family: "Orbitron", sans-serif;
+  color: #fff;
+}
+
+.readme-title {
+  color: var(--neon-cyan);
+  text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-magenta);
+  margin-bottom: 12px;
+}
+
+.readme-intro {
+  font-size: 1.1rem;
+  margin-bottom: 18px;
+  color: rgba(255,255,255,0.85);
+}
+
+.readme-container h3 {
+  margin-top: 16px;
+  color: var(--neon-magenta);
+}
+
+.readme-container ul {
+  margin-left: 20px;
+  list-style: square;
+}
+
 .features-grid {
   display: grid; gap: 16px;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
