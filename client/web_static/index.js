@@ -40,9 +40,6 @@ document.querySelectorAll(".sidebar a").forEach(link => {
     } else if (targetId === "analyticsPanel") {
       message = "Loading Analytics Core...";
       finalMessage = "Analytics Ready";
-    } else if (targetId === "logsPanel") {
-      message = "Loading Logs Console...";
-      finalMessage = "Logs Ready";
     } else if (targetId === "featuresPanel") {
       message = "Loading Feature Modules...";
       finalMessage = "Features Ready";
@@ -59,59 +56,6 @@ document.querySelectorAll(".sidebar a").forEach(link => {
   });
 });
 
-
-// === Logs helper (console entries) ===
-function addLog(message) {
-  const logOutput = document.getElementById("logOutput");
-  if (logOutput) {
-    const timestamp = new Date().toLocaleTimeString();
-    logOutput.textContent += `\n[${timestamp}] ${message}`;
-    logOutput.scrollTop = logOutput.scrollHeight;
-  }
-}
-
-// === Logs Pie Chart ===
-let logsChart;
-function updateLogs(imageURLPath, data) {
-  // Add timestamped log entry
-  addLog(`Image ${imageURLPath} = ${data.predicted_label} (Confidence: ${data.confidence.toFixed(4)})`);
-
-  const ctx = document.getElementById("logsPieChart");
-  if (!ctx) return;
-
-  const chartData = {
-    labels: ["Fake Probability", "Real Probability"],
-    datasets: [{
-      data: [
-        data.fake_probability ? data.fake_probability * 100 : 0,
-        data.real_probability ? data.real_probability * 100 : 0
-      ],
-      backgroundColor: ["#ff0040", "#00ff80"],
-      borderColor: ["#fff", "#fff"],
-      borderWidth: 2
-    }]
-  };
-
-  if (logsChart) logsChart.destroy();
-  logsChart = new Chart(ctx, {
-    type: "pie",
-    data: chartData,
-    options: {
-      responsive: true,
-      plugins: {
-        legend: {
-          labels: { color: "#0ff", font: { family: "Orbitron", size: 14 } }
-        },
-        title: {
-          display: true,
-          text: `Detection Result for ${imageURLPath}`,
-          color: "#f0f",
-          font: { family: "Orbitron", size: 16 }
-        }
-      }
-    }
-  });
-}
 
 // === Analytics Bar Chart + Grid ===
 let analyticsChart;
@@ -251,11 +195,10 @@ function checkImage(imageFullPath, imageURLPath) {
     if (!window.veraxResults) window.veraxResults = {};
     window.veraxResults[imageURLPath] = data;
 
-    // Update Logs + Analytics
-    updateLogs(imageURLPath, data);
+    // Update Analytics
     updateAnalytics(imageURLPath, data);
   })
   .catch(err => {
-    addLog(`Detection error for ${imageURLPath}: ${err?.message || err}`);
+    console.error(`Detection error for ${imageURLPath}:`, err);
   });
 }
