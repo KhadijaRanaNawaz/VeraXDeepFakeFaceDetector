@@ -93,7 +93,9 @@ function checkImage(imageFullPath, imageURLPath) {
 }
 // === Logs Pie Chart ===
 let logsChart; // global chart instance
+updateLogs(imageURLPath, data);
 
+// === Analytics Bar Chart + Grid === let analyticsChart; function updateAnalytics(imageURLPath, data) { // Prepare dataset if (!window.analyticsData) window.analyticsData = []; window.analyticsData.push({ id: imageURLPath, label: data.predicted_label, confidence: data.confidence, fake: data.fake_probability, real: data.real_probability }); // Update bar chart const ctx = document.getElementById("analyticsBarChart"); if (ctx) { const labels = window.analyticsData.map(d => d.id); const confidences = window.analyticsData.map(d => (d.confidence * 100).toFixed(2)); if (analyticsChart) analyticsChart.destroy(); analyticsChart = new Chart(ctx, { type: "bar", data: { labels: labels, datasets: [{ label: "Confidence %", data: confidences, backgroundColor: "#0ff", borderColor: "#f0f", borderWidth: 2 }] }, options: { responsive: true, plugins: { legend: { labels: { color: "#0ff", font: { family: "Orbitron", size: 14 } } }, title: { display: true, text: "Detection Confidence per Image", color: "#f0f", font: { family: "Orbitron", size: 16 } } }, scales: { x: { ticks: { color: "#f0f" }, grid: { color: "rgba(0,255,255,0.2)" } }, y: { ticks: { color: "#f0f" }, grid: { color: "rgba(240,0,255,0.2)" }, min: 0, max: 100 } } } }); }
 
 function updateLogs(imageURLPath, data) {
   // Add timestamped log entry
@@ -117,6 +119,8 @@ function updateLogs(imageURLPath, data) {
       borderWidth: 2
     }]
   };
+  updateAnalytics(imageURLPath, data);
+
 
 
   // Destroy old chart if exists
@@ -143,8 +147,7 @@ function updateLogs(imageURLPath, data) {
     }
   });
 }
-updateLogs(imageURLPath, data);
-updateAnalytics(imageURLPath, data);
+
 
 // Auto-trigger detection for all images (keeps your 1090 flow; heavy but cinematic)
 window.addEventListener("load", () => {
