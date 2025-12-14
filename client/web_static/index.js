@@ -81,28 +81,25 @@ function checkImage(imageFullPath, imageURLPath) {
 
 
     const bar = document.getElementById("confidence-fill-" + imageURLPath);
-if (bar && data.confidence !== undefined) {
-  bar.style.width = (data.confidence * 100).toFixed(2) + "%";
+    if (bar && data.confidence !== undefined) {
+      bar.style.width = (data.confidence * 100).toFixed(2) + "%";
 
-  // Change color based on prediction
-  if (data.predicted_label === "fake") {
-    bar.style.background = "linear-gradient(90deg, #ff0040, #ff0040)"; // red
-    bar.style.boxShadow = "0 0 12px #ff0040";
-  } else {
-    bar.style.background = "linear-gradient(90deg, #00ff80, #00ff80)"; // green
-    bar.style.boxShadow = "0 0 12px #00ff80";
-  }
-}
-
-}
-
-
+      // Change color based on prediction
+      if (data.predicted_label === "fake") {
+        bar.style.background = "linear-gradient(90deg, #ff0040, #ff0040)"; // red
+        bar.style.boxShadow = "0 0 12px #ff0040";
+      } else {
+        bar.style.background = "linear-gradient(90deg, #00ff80, #00ff80)"; // green
+        bar.style.boxShadow = "0 0 12px #00ff80";
+      }
+    }
 
     // Save result for Logs/Analytics later
     if (!window.veraxResults) window.veraxResults = {};
     window.veraxResults[imageURLPath] = data;
   });
-}
+  };
+
 // === Logs helper (console entries) ===
 function addLog(message) {
   const logOutput = document.getElementById("logOutput");
