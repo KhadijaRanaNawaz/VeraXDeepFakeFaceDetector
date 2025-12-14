@@ -128,7 +128,7 @@ body {
 }
 
 
-/* Analytics + Logs panels */
+/* Analytics panels */
 .verax-panel {
   background: var(--panel);
   border: 1px solid var(--border);
@@ -140,15 +140,6 @@ body {
 .panel-title { margin: 0; color: var(--neon-cyan); letter-spacing: 1px; }
 .panel-subtitle { color: rgba(255,255,255,0.6); font-size: 0.9rem; }
 .panel-body { padding: 14px; }
-
-
-.logs {
-  height: 280px; overflow-y: auto; font-family: "Share Tech Mono", monospace; color: var(--neon-cyan);
-  background: rgba(0,0,0,0.85); border: 2px solid var(--neon-magenta); border-radius: 12px;
-  box-shadow: 0 0 20px var(--neon-magenta) inset, 0 0 28px var(--neon-cyan);
-}
-.logs::-webkit-scrollbar { width: 10px; }
-.logs::-webkit-scrollbar-thumb { background: linear-gradient(var(--neon-cyan), var(--neon-magenta)); border-radius: 8px; }
 
 
 /* Features grid (VS Code style) */
