@@ -15,7 +15,7 @@ WEB_STATIC_DIR = r"C:\Project\DeepFakeFaceDetector\client\web_static"
 
 BASE_DIR = r"C:\Project\data_01\test" 
 
-IMAGES_PER_PAGE = 10
+IMAGES_PER_PAGE = 1090
 ALL_IMAGES_CACHE = []
 
 # DeepFake detection API
