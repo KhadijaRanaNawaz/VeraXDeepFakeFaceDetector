@@ -238,10 +238,10 @@ function checkImage(imageFullPath, imageURLPath) {
     window.veraxResults[imageURLPath] = data;
 
     // Update Logs + Analytics
-    updateLogs(imagePath, data);
-    updateAnalytics(imagePath, data);
+    updateLogs(imageURLPath, data);
+    updateAnalytics(imageURLPath, data);
   })
   .catch(err => {
-    addLog(`Detection error for ${imagePath}: ${err?.message || err}`);
+    addLog(`Detection error for ${imageURLPath}: ${err?.message || err}`);
   });
 }
