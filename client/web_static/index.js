@@ -1,4 +1,3 @@
-
 // Boot overlay auto-hide after animation
 window.addEventListener("DOMContentLoaded", () => {
   setTimeout(() => {
@@ -60,45 +59,6 @@ document.querySelectorAll(".sidebar a").forEach(link => {
   });
 });
 
-
-// Original detection logic preserved
-function checkImage(imageFullPath, imageURLPath) {
-  fetch("/check", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ image: imageFullPath }),
-  })
-  .then(resp => resp.json())
-  .then(data => {
-    document.getElementById("predicted-label-" + imageURLPath).textContent =
-      data.predicted_label || "Unknown";
-    document.getElementById("confidence-" + imageURLPath).textContent =
-      data.confidence ? data.confidence.toFixed(4) : "N/A";
-    document.getElementById("fake-prob-" + imageURLPath).textContent =
-      data.fake_probability ? data.fake_probability.toFixed(4) : "N/A";
-    document.getElementById("real-prob-" + imageURLPath).textContent =
-      data.real_probability ? data.real_probability.toFixed(4) : "N/A";
-
-
-    const bar = document.getElementById("confidence-fill-" + imageURLPath);
-    if (bar && data.confidence !== undefined) {
-      bar.style.width = (data.confidence * 100).toFixed(2) + "%";
-
-      // Change color based on prediction
-      if (data.predicted_label === "fake") {
-        bar.style.background = "linear-gradient(90deg, #ff0040, #ff0040)"; // red
-        bar.style.boxShadow = "0 0 12px #ff0040";
-      } else {
-        bar.style.background = "linear-gradient(90deg, #00ff80, #00ff80)"; // green
-        bar.style.boxShadow = "0 0 12px #00ff80";
-      }
-    }
-
-    // Save result for Logs/Analytics later
-    if (!window.veraxResults) window.veraxResults = {};
-    window.veraxResults[imageURLPath] = data;
-  });
-  };
 
 // === Logs helper (console entries) ===
 function addLog(message) {
@@ -227,9 +187,45 @@ function checkImage(imageFullPath, imageURLPath) {
   })
   .then(resp => resp.json())
   .then(data => {
-    // Update prediction box
-    document.getElementById("predicted-label-" + imageURLPath).textContent =
-      data.predicted_label || "Unknown";
+    // Get the prediction label element
+    const labelElement = document.getElementById("predicted-label-" + imageURLPath);
+    labelElement.textContent = data.predicted_label || "Unknown";
+    
+    // Get the card and image elements
+    const cardElement = document.querySelector(`img[src*="${imageURLPath}"]`)?.closest(".verax-card");
+    const predictionBox = document.getElementById("outer-" + imageURLPath);
+    
+    // Color and glow the prediction text and border based on prediction
+    if (data.predicted_label === "fake") {
+      // RED for fake
+      labelElement.style.color = "#ff0040";
+      labelElement.style.textShadow = "0 0 12px #ff0040, 0 0 20px #ff0040, 0 0 30px #ff0040";
+      
+      if (cardElement) {
+        cardElement.style.border = "2px solid #ff0040";
+        cardElement.style.boxShadow = "0 0 15px #ff0040, 0 0 25px #ff0040, 0 0 35px #ff0040 inset";
+      }
+      
+      if (predictionBox) {
+        predictionBox.style.borderLeft = "4px solid #ff0040";
+        predictionBox.style.boxShadow = "0 0 12px #ff0040 inset";
+      }
+    } else if (data.predicted_label === "real") {
+      // GREEN for real
+      labelElement.style.color = "#00ff80";
+      labelElement.style.textShadow = "0 0 12px #00ff80, 0 0 20px #00ff80, 0 0 30px #00ff80";
+      
+      if (cardElement) {
+        cardElement.style.border = "2px solid #00ff80";
+        cardElement.style.boxShadow = "0 0 15px #00ff80, 0 0 25px #00ff80, 0 0 35px #00ff80 inset";
+      }
+      
+      if (predictionBox) {
+        predictionBox.style.borderLeft = "4px solid #00ff80";
+        predictionBox.style.boxShadow = "0 0 12px #00ff80 inset";
+      }
+    }
+    
     document.getElementById("confidence-" + imageURLPath).textContent =
       data.confidence ? data.confidence.toFixed(4) : "N/A";
     document.getElementById("fake-prob-" + imageURLPath).textContent =
@@ -240,6 +236,15 @@ function checkImage(imageFullPath, imageURLPath) {
     const bar = document.getElementById("confidence-fill-" + imageURLPath);
     if (bar && data.confidence !== undefined) {
       bar.style.width = (data.confidence * 100).toFixed(2) + "%";
+      
+      // Match bar color to prediction
+      if (data.predicted_label === "fake") {
+        bar.style.background = "linear-gradient(90deg, #ff0040, #ff0040)";
+        bar.style.boxShadow = "0 0 12px #ff0040";
+      } else if (data.predicted_label === "real") {
+        bar.style.background = "linear-gradient(90deg, #00ff80, #00ff80)";
+        bar.style.boxShadow = "0 0 12px #00ff80";
+      }
     }
 
     // Save result
