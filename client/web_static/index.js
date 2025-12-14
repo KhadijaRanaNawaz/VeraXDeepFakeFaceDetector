@@ -144,7 +144,7 @@ function updateLogs(imageURLPath, data) {
   });
 }
 updateLogs(imageURLPath, data);
-
+updateAnalytics(imageURLPath, data);
 
 // Auto-trigger detection for all images (keeps your 1090 flow; heavy but cinematic)
 window.addEventListener("load", () => {
