@@ -1,10 +1,89 @@
-/* === VeraX Add-on Styles ===
-   These styles are layered on top of your existing design.
-   They do NOT remove or override your core aesthetic — they refine and size
-   the Detect button, the Logs pie chart, the Analytics bar chart + grid,
-   and add small cinematic enhancements. */
+/* Base */
+:root {
+  --obsidian: #0a0a0a;
+  --panel: rgba(16,16,19,0.92);
+  --neon-cyan: #0ff;
+  --neon-magenta: #f0f;
+  --accent-green: #00ff80;
+  --border: rgba(0,255,255,0.4);
+  --border-strong: rgba(0,255,255,0.9);
+}
+html, body { height: 100%; }
+body {
+  background-color: var(--obsidian);
+  color: #fff;
+  font-family: "Orbitron", sans-serif;
+  margin: 0; padding: 0;
+  overflow-x: hidden;
+}
 
-/* — Detect button (neon, subtle, on-brand) — */
+/* Neon grid background layers */
+.grid-bg {
+  position: fixed; top:0; left:0; width:100%; height:100%; z-index:-1;
+  background-image:
+    linear-gradient(var(--neon-cyan) 1px, transparent 1px),
+    linear-gradient(90deg, var(--neon-cyan) 1px, transparent 1px);
+}
+.layer1 { background-size:40px 40px; opacity:0.08; animation: moveGrid1 20s linear infinite; }
+.layer2 { background-size:80px 80px; opacity:0.05; animation: moveGrid2 40s linear infinite reverse; }
+.layer3 { background-size:120px 120px; opacity:0.03; animation: moveGrid3 60s linear infinite; }
+@keyframes moveGrid1 { 0% {background-position:0 0;} 100% {background-position:40px 40px;} }
+@keyframes moveGrid2 { 0% {background-position:0 0;} 100% {background-position:80px 80px;} }
+@keyframes moveGrid3 { 0% {background-position:0 0;} 100% {background-position:120px 120px;} }
+
+/* Layout */
+.dashboard { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
+.sidebar {
+  background: rgba(0,0,0,0.85);
+  border-right: 2px solid var(--border-strong);
+  padding: 24px 18px;
+}
+.sidebar .logo { text-align: center; margin-bottom: 22px; letter-spacing: 2px; }
+.nav-list { list-style: none; padding: 0; margin: 0; }
+.nav-list li { margin: 16px 0; }
+.nav-list a {
+  color: var(--neon-cyan); text-decoration: none; display: block; padding: 10px 12px;
+  border-radius: 8px; transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
+}
+.nav-list a:hover {
+  background: rgba(0,255,255,0.12);
+  box-shadow: 0 0 12px var(--neon-cyan), 0 0 20px var(--neon-magenta);
+  transform: translateX(4px);
+}
+
+.topbar { background: var(--panel); border-bottom: 2px solid var(--border-strong); padding: 18px; text-align: center; }
+.bordered-title {
+  border: 2px solid var(--neon-cyan);
+  padding: 10px 16px; display: inline-block; margin: 0 auto;
+  text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-magenta);
+}
+
+/* Panels */
+.content { padding: 16px; }
+.panel {
+  opacity: 0; transform: translateY(26px) scale(0.98); filter: blur(6px);
+  transition: all 0.6s ease-in-out; position: relative;
+}
+.panel.active { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+
+/* Cards */
+.verax-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,255,255,0.1), 0 0 18px rgba(240,0,255,0.08);
+  overflow: hidden;
+  margin: 0 auto;
+  max-width: 340px;
+  padding: 10px;
+}
+.verax-img { border-bottom: 1px solid rgba(255,255,255,0.06); transition: filter 0.25s ease, transform 0.25s ease; }
+.verax-card:hover .verax-img {
+  filter: brightness(1.06) saturate(1.04);
+  transform: scale(1.01);
+}
+
+/* Detect button */
 .holo-button {
   background: rgba(0,255,255,0.15);
   color: var(--neon-cyan);
@@ -16,155 +95,57 @@
   transition: all 0.3s ease;
 }
 .holo-button:hover {
-  background: rgba(0,255,255,0.28);
-  box-shadow: 0 0 10px var(--neon-cyan), 0 0 18px var(--neon-magenta);
-  transform: translateY(-1px) scale(1.04);
+  background: rgba(0,255,255,0.3);
+  box-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-magenta);
+  transform: scale(1.05);
 }
-.holo-button:active {
-  transform: translateY(0) scale(1.01);
-  box-shadow: 0 0 6px var(--neon-cyan), 0 0 12px var(--neon-magenta);
-}
-
-/* — Card spacing refinement (keeps your grid, just centers cards cleanly) — */
-.verax-card {
-  margin: 0 auto;
-  max-width: 340px; /* keeps cards elegant at larger screens without breaking your grid */
-  padding: 10px;
+.holo-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0,255,255,0.35), 0 0 12px var(--neon-magenta);
 }
 
-/* — Confidence bar polish (slightly brighter glow on fill) — */
-.confidence-bar > div {
-  box-shadow: 0 0 12px var(--neon-cyan), 0 0 16px rgba(240,0,255,0.25);
+/* Prediction box */
+.prediction-box {
+  padding: 12px; font-family: "Share Tech Mono", monospace; background: rgba(0,0,0,0.55);
+  border-top: 1px solid rgba(255,255,255,0.08);
 }
+.confidence-bar { width: 100%; height: 8px; background: rgba(255,255,255,0.08); border-radius: 6px; overflow: hidden; margin: 8px 0 6px; }
+.confidence-bar > div { height: 100%; width: 0%; background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta)); box-shadow: 0 0 12px var(--neon-cyan), 0 0 16px rgba(240,0,255,0.25); }
+.prob-line { margin: 3px 0; }
 
-/* — Logs pie chart container (centered, large, cinematic) — */
+/* Analytics + Logs panels */
+.verax-panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px;
+  box-shadow: 0 0 14px rgba(0,255,255,0.1), 0 0 24px rgba(240,0,255,0.09);
+}
+.panel-header { padding: 14px 16px; border-bottom: 2px solid rgba(0,255,255,0.25); }
+.panel-title { margin: 0; color: var(--neon-cyan); letter-spacing: 1px; font-size: 1.35rem; }
+.panel-subtitle { color: rgba(255,255,255,0.7); font-size: 1rem; }
+.panel-body { padding: 18px; }
+
+/* Logs console */
+.logs {
+  height: 280px; overflow-y: auto; font-family: "Share Tech Mono", monospace; color: var(--neon-cyan);
+  background: rgba(0,0,0,0.85); border: 2px solid var(--neon-magenta); border-radius: 12px;
+  box-shadow: 0 0 20px var(--neon-magenta) inset, 0 0 28px var(--neon-cyan);
+  padding: 12px;
+}
+.logs::-webkit-scrollbar { width: 10px; }
+.logs::-webkit-scrollbar-thumb { background: linear-gradient(var(--neon-cyan), var(--neon-magenta)); border-radius: 8px; }
+
+/* Logs pie chart */
 .logs-chart-container {
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 16px auto 20px;
 }
-#logsPieChart {
+#logsPieChart  {
   width: 100%;
   max-width: 640px;
   height: auto;
   border-radius: 12px;
-  box-shadow: 0 0 20px var(--neon-magenta), 0 0 26px rgba(0,255,255,0.18);
-}
-
-/* — Analytics bar chart (large, centered, labeled) — */
-.analytics-chart-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-#analyticsBarChart {
-  width: 100%;
-  max-width: 820px;
-  height: auto;
-  border-radius: 12px;
-  box-shadow: 0 0 20px var(--neon-magenta), 0 0 26px rgba(0,255,255,0.18);
-}
-
-/* — Analytics grid table (neon readable, subtle separators) — */
-.analytics-grid-container {
-  margin-top: 20px;
-}
-#analyticsGrid {
-  font-family: "Share Tech Mono", monospace;
-  font-size: 0.96rem;
-  border: none; /* keep Bootstrap borders minimal, emphasize neon */
-  box-shadow: 0 0 12px var(--neon-cyan);
-}
-#analyticsGrid thead th {
-  background: var(--neon-cyan);
-  color: #000;
-  text-align: center;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-  border-bottom: none;
-}
-#analyticsGrid tbody td {
-  background: rgba(0,0,0,0.7);
-  color: var(--neon-cyan);
-  text-align: center;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-}
-#analyticsGrid tbody tr:hover {
-  background: rgba(0,255,255,0.1);
-  box-shadow: inset 0 0 10px var(--neon-magenta);
-}
-
-/* — Panel headers: Slightly stronger separation and breathing room — */
-.panel-header {
-  padding: 14px 16px;
-  border-bottom: 2px solid rgba(0,255,255,0.25);
-}
-.panel-title {
-  font-size: 1.35rem;
-}
-.panel-subtitle {
-  font-size: 1rem;
-  color: rgba(255,255,255,0.7);
-}
-
-/* — Logs console: extra padding + glow harmony — */
-.panel-body .logs {
-  padding: 12px;
-  border-color: var(--neon-magenta);
-  box-shadow: 0 0 20px var(--neon-magenta) inset, 0 0 24px rgba(0,255,255,0.25);
-}
-
-/* — README container (already present — add minor spacing + responsive padding) — */
-.readme-container {
-  margin-bottom: 20px;
-}
-@media (max-width: 768px) {
-  .readme-container {
-    padding: 16px;
-  }
-}
-
-/* — Sidebar logo holographic enhancement (optional) — */
-.holo-text {
-  color: var(--neon-cyan);
-  text-shadow: 0 0 8px var(--neon-cyan), 0 0 16px var(--neon-magenta);
-  letter-spacing: 1px;
-}
-
-/* — Responsive tuning (ensures big visuals scale gracefully) — */
-@media (max-width: 1200px) {
-  #analyticsBarChart { max-width: 740px; }
-  #logsPieChart { max-width: 580px; }
-}
-@media (max-width: 992px) {
-  .verax-card { max-width: 360px; }
-  #analyticsBarChart { max-width: 640px; }
-  #logsPieChart { max-width: 520px; }
-}
-@media (max-width: 768px) {
-  .verax-card { max-width: 100%; }
-  #analyticsBarChart { max-width: 100%; }
-  #logsPieChart { max-width: 100%; }
-}
-
-/* — Focus rings for accessibility (neon consistent) — */
-.holo-button:focus,
-.nav-list a:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(0,255,255,0.35), 0 0 12px var(--neon-magenta);
-}
-
-/* — Gentle panel body breathing room (maintain your base 14px) — */
-.panel-body {
-  padding: 18px;
-}
-
-/* — Optional: image hover aura (subtle, keeps professionalism) — */
-.verax-img {
-  transition: filter 0.25s ease, transform 0.25s ease;
-}
-.verax-card:hover .verax-img {
-  filter: brightness(1.06) saturate(1.04);
-  transform: scale(1.01);
-}
+  box-shadow: 0 

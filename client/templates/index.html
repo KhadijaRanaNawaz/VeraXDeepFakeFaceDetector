@@ -95,6 +95,26 @@
             </div>
           </div>
 
+          <!-- LOGS -->
+          <div id="logsPanel" class="panel">
+            <div class="container py-4">
+              <div class="card verax-panel">
+                <div class="panel-header">
+                  <h3 class="panel-title">Logs Console</h3>
+                  <span class="panel-subtitle">System events & detection traces</span>
+                </div>
+                <div class="panel-body">
+                  <!-- Pie chart -->
+                  <div class="logs-chart-container mb-3">
+                    <canvas id="logsPieChart" width="400" height="400"></canvas>
+                  </div>
+                  <!-- Console log -->
+                  <pre id="logOutput" class="logs">[System] Awaiting events...</pre>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- ANALYTICS -->
           <div id="analyticsPanel" class="panel">
             <div class="container py-4">
@@ -123,26 +143,6 @@
                       <tbody></tbody>
                     </table>
                   </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- LOGS -->
-          <div id="logsPanel" class="panel">
-            <div class="container py-4">
-              <div class="card verax-panel">
-                <div class="panel-header">
-                  <h3 class="panel-title">Logs Console</h3>
-                  <span class="panel-subtitle">System events & detection traces</span>
-                </div>
-                <div class="panel-body">
-                  <!-- Pie chart -->
-                  <div class="logs-chart-container mb-3">
-                    <canvas id="logsPieChart" width="400" height="400"></canvas>
-                  </div>
-                  <!-- Console log -->
-                  <pre id="logOutput" class="logs">[System] Awaiting events...</pre>
                 </div>
               </div>
             </div>
@@ -178,17 +178,24 @@
                 <p>VeraX blends sci‑fi aesthetics with forensic rigor. It is designed for judges, users, and leaders who demand legendary results.</p>
               </div>
 
-              <!-- Existing feature cards preserved -->
+              <!-- Feature cards (unchanged) -->
               <div class="features-grid">
-                <!-- Agent mode -->
+                {% for feature in feature_list %}
                 <div class="feature-card">
                   <div class="feature-header">
-                    <h4>Agent mode</h4>
-                    <span>Collaborative detection workflows</span>
+                    <h4>{{ feature.title }}</h4>
+                    <span>{{ feature.subtitle }}</span>
                   </div>
-                  <p>Enable multiple detection agents (image, video, metadata) to work together in a shared workspace with isolated logs and contexts.</p>
+                  <p>{{ feature.description }}</p>
                   <div class="feature-actions">
-                    <button class="ghost-btn" disabled>Build with agent mode</button>
+                    <button class="ghost-btn" disabled>{{ feature.button }}</button>
                   </div>
                 </div>
-                <!-- ... other feature cards unchanged ... -->
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </body

@@ -1,4 +1,4 @@
-// Boot overlay auto-hide after animation
+// === Boot overlay auto-hide after animation ===
 window.addEventListener("DOMContentLoaded", () => {
   setTimeout(() => {
     const boot = document.getElementById("bootOverlay");
@@ -6,7 +6,7 @@ window.addEventListener("DOMContentLoaded", () => {
   }, 4200);
 });
 
-// Overlay functions with panel-specific messages
+// === Overlay functions with panel-specific messages ===
 function showOverlay(message = "Analyzing Core Systems...") {
   const overlay = document.getElementById("loadingOverlay");
   const text = overlay.querySelector(".overlay-text");
@@ -20,7 +20,7 @@ function hideOverlay(finalMessage = "Module Ready") {
   setTimeout(() => { overlay.style.display = "none"; }, 800);
 }
 
-// Sidebar navigation (VS Code panel feel)
+// === Sidebar navigation (VS Code panel feel) ===
 document.querySelectorAll(".sidebar a").forEach(link => {
   link.addEventListener("click", e => {
     e.preventDefault();
@@ -54,7 +54,7 @@ document.querySelectorAll(".sidebar a").forEach(link => {
   });
 });
 
-// Logs helper (VS Code terminal feel)
+// === Logs helper (VS Code terminal feel) ===
 function addLog(message) {
   const logOutput = document.getElementById("logOutput");
   if (logOutput) {
@@ -65,13 +65,10 @@ function addLog(message) {
 }
 
 // === Logs Pie Chart ===
-let logsChart; // global chart instance
-
+let logsChart;
 function updateLogs(imageURLPath, data) {
-  // Add timestamped log entry
   addLog(`Image ${imageURLPath} = ${data.predicted_label} (Confidence: ${data.confidence.toFixed(4)})`);
 
-  // Prepare pie chart data
   const ctx = document.getElementById("logsPieChart");
   if (!ctx) return;
 
@@ -88,10 +85,7 @@ function updateLogs(imageURLPath, data) {
     }]
   };
 
-  // Destroy old chart if exists
   if (logsChart) logsChart.destroy();
-
-  // Create new pie chart
   logsChart = new Chart(ctx, {
     type: "pie",
     data: chartData,
@@ -114,9 +108,7 @@ function updateLogs(imageURLPath, data) {
 
 // === Analytics Bar Chart + Grid ===
 let analyticsChart;
-
 function updateAnalytics(imageURLPath, data) {
-  // Prepare dataset
   if (!window.analyticsData) window.analyticsData = [];
   window.analyticsData.push({
     id: imageURLPath,
@@ -126,7 +118,6 @@ function updateAnalytics(imageURLPath, data) {
     real: data.real_probability
   });
 
-  // Update bar chart
   const ctx = document.getElementById("analyticsBarChart");
   if (ctx) {
     const labels = window.analyticsData.map(d => d.id);
@@ -164,7 +155,6 @@ function updateAnalytics(imageURLPath, data) {
     });
   }
 
-  // Update grid table
   const tbody = document.querySelector("#analyticsGrid tbody");
   if (tbody) {
     const row = document.createElement("tr");
@@ -188,7 +178,6 @@ function checkImage(imageFullPath, imageURLPath) {
   })
   .then(resp => resp.json())
   .then(data => {
-    // Update prediction box
     const pred = document.getElementById("predicted-label-" + imageURLPath);
     const conf = document.getElementById("confidence-" + imageURLPath);
     const fake = document.getElementById("fake-prob-" + imageURLPath);
@@ -203,7 +192,6 @@ function checkImage(imageFullPath, imageURLPath) {
       bar.style.width = (data.confidence * 100).toFixed(2) + "%";
     }
 
-    // Persist result for potential exports
     if (!window.veraxResults) window.veraxResults = {};
     window.veraxResults[imageURLPath] = data;
 
@@ -216,14 +204,15 @@ function checkImage(imageFullPath, imageURLPath) {
   });
 }
 
-// Auto-trigger detection for all images (optional, heavy — keep commented for demo control)
+// === Auto-trigger detection for all images (optional, heavy) ===
+// Uncomment if you want all 1090 images to scan automatically on load
 // window.addEventListener("load", () => {
 //   {% for image in image_list %}
 //   checkImage("{{ image.image_full_path }}", "{{ image.image_url }}");
 //   {% endfor %}
 // });
 
-// Static demo accuracy chart (your original)
+// === Static demo accuracy chart (original) ===
 window.addEventListener("DOMContentLoaded", () => {
   const ctx = document.getElementById("accuracyChart");
   if (!ctx) return;
@@ -234,25 +223,4 @@ window.addEventListener("DOMContentLoaded", () => {
       labels: ["Run 1","Run 2","Run 3","Run 4","Run 5"],
       datasets: [{
         label: "Accuracy %",
-        data: [98.5, 99.1, 99.5, 99.8, 99.95],
-        borderColor: "#0ff",
-        backgroundColor: "rgba(0,255,255,0.15)",
-        tension: 0.35,
-        pointBackgroundColor: "#f0f",
-        pointBorderColor: "#0ff",
-        pointRadius: 5,
-        pointHoverRadius: 9,
-      }]
-    },
-    options: {
-      plugins: {
-        legend: { labels: { color: "#0ff", font: { family: "Orbitron", size: 13 } } }
-      },
-      scales: {
-        x: { ticks: { color: "#f0f" }, grid: { color: "rgba(0,255,255,0.12)" } },
-        y: { min: 95, max: 100, ticks: { color: "#f0f" }, grid: { color: "rgba(240,0,255,0.12)" } }
-      }
-    }
-  });
-});
-
+        data: [98.5,
