@@ -65,10 +65,13 @@ function addLog(message) {
 }
 
 // === Logs Pie Chart ===
-let logsChart;
+let logsChart; // global chart instance
+
 function updateLogs(imageURLPath, data) {
+  // Add timestamped log entry
   addLog(`Image ${imageURLPath} = ${data.predicted_label} (Confidence: ${data.confidence.toFixed(4)})`);
 
+  // Prepare pie chart data
   const ctx = document.getElementById("logsPieChart");
   if (!ctx) return;
 
@@ -85,7 +88,10 @@ function updateLogs(imageURLPath, data) {
     }]
   };
 
+  // Destroy old chart if exists
   if (logsChart) logsChart.destroy();
+
+  // Create new pie chart
   logsChart = new Chart(ctx, {
     type: "pie",
     data: chartData,
@@ -108,7 +114,9 @@ function updateLogs(imageURLPath, data) {
 
 // === Analytics Bar Chart + Grid ===
 let analyticsChart;
+
 function updateAnalytics(imageURLPath, data) {
+  // Prepare dataset
   if (!window.analyticsData) window.analyticsData = [];
   window.analyticsData.push({
     id: imageURLPath,
@@ -156,7 +164,7 @@ function updateAnalytics(imageURLPath, data) {
     });
   }
 
-  // Update grid
+  // Update grid table
   const tbody = document.querySelector("#analyticsGrid tbody");
   if (tbody) {
     const row = document.createElement("tr");
@@ -180,6 +188,7 @@ function checkImage(imageFullPath, imageURLPath) {
   })
   .then(resp => resp.json())
   .then(data => {
+    // Update prediction box
     const pred = document.getElementById("predicted-label-" + imageURLPath);
     const conf = document.getElementById("confidence-" + imageURLPath);
     const fake = document.getElementById("fake-prob-" + imageURLPath);
@@ -194,27 +203,27 @@ function checkImage(imageFullPath, imageURLPath) {
       bar.style.width = (data.confidence * 100).toFixed(2) + "%";
     }
 
-    // Persist results for potential exports
+    // Persist result for potential exports
     if (!window.veraxResults) window.veraxResults = {};
     window.veraxResults[imageURLPath] = data;
 
     // Update Logs and Analytics
     updateLogs(imageURLPath, data);
     updateAnalytics(imageURLPath, data);
+  })
+  .catch(err => {
+    addLog(`Detection error for ${imageURLPath}: ${err?.message || err}`);
   });
 }
 
-// Auto-trigger detection for all images (optional, heavy — comment out if needed)
-window.addEventListener("load", () => {
-  const imageList = [
-    {% for image in image_list %}
-    { fullPath: "{{ image.image_full_path }}", url: "{{ image.image_url }}" },
-    {% endfor %}
-  ];
-  imageList.forEach(img => checkImage(img.fullPath, img.url));
-});
+// Auto-trigger detection for all images (optional, heavy — keep commented for demo control)
+// window.addEventListener("load", () => {
+//   {% for image in image_list %}
+//   checkImage("{{ image.image_full_path }}", "{{ image.image_url }}");
+//   {% endfor %}
+// });
 
-// Static demo accuracy chart (kept from your original)
+// Static demo accuracy chart (your original)
 window.addEventListener("DOMContentLoaded", () => {
   const ctx = document.getElementById("accuracyChart");
   if (!ctx) return;
@@ -246,3 +255,4 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+
