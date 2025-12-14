@@ -114,6 +114,18 @@ body {
   transition: width 0.4s ease, background 0.4s ease;
 }
 
+/* Prediction label color styling */
+#predicted-label-container span {
+  font-weight: bold;
+  text-shadow: 0 0 8px currentColor;
+  transition: color 0.3s ease;
+}
+
+/* Dynamic coloring via JavaScript - base styles for prediction labels */
+[id^="predicted-label-"] {
+  font-weight: bold;
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+}
 
 
 /* Analytics + Logs panels */
@@ -225,5 +237,3 @@ body {
   text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-magenta);
 }
 @keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
-
-
